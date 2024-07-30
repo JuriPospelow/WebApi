@@ -1,0 +1,7 @@
+{
+    "dependencies": [
+        "boost-algorithm",
+        "boost-tokenizer",
+        "boost-json"
+      ]
+}
