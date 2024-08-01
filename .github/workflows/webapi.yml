@@ -73,7 +73,8 @@ jobs:
         working-directory: ./
         run: |
           cmake -DPATCH_VERSION=${{ github.run_number }}
-          cmake --build --preset ninja-vcpkg-release
+          cmake --preset default
+          cmake --build build
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
