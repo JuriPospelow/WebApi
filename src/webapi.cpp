@@ -11,10 +11,11 @@ using namespace std;
 using namespace boost;
 
 typedef multimap<std::string, std::string> MultiMap;
+MultiMap DataPrepare;
 
-void dataPrepare(std::string key)
+void dataPrepare(std::string file_name)
 {
-    std::string data("netlog.csv");
+    std::string data(file_name);
 
     ifstream in(data.c_str());
     if (!in.is_open()) return ;
@@ -25,7 +26,6 @@ void dataPrepare(std::string key)
     std::string line;
 
     int cnt_eol = 0;
-    MultiMap DataPrepare;
 
     while (getline(in,line))
     {
@@ -35,8 +35,6 @@ void dataPrepare(std::string key)
         if(line.find("\n")) {
             ++cnt_eol;
             if(cnt_eol == 3){
-                // cout << line << " " << endl;
-                // cout << cnt_eol << " " << endl;
                 DataPrepare.insert(pair<std::string, std::string>("header", line));
             }
         }
@@ -51,21 +49,24 @@ void dataPrepare(std::string key)
         }
 
     }
-// Make JSON-String
-    MultiMap::iterator itr;
-    for (itr = DataPrepare.begin(); itr != DataPrepare.end(); ++itr) {
-        if(itr->first == key) {
-            trim(itr->second);
-            std::string out = "[" + itr->second + "]";
-            // string out = "[" + trim(itr->second) + "]";
-            cout << out << '\n';
-        }
-    }
 }
 
 
 int main()
 {
-    dataPrepare("header");
+    dataPrepare("netlog.csv");
+
+    // MultiMap::iterator itr;
+    // for (itr = DataPrepare.begin(); itr != DataPrepare.end(); ++itr) {
+    //     trim(itr->second);
+    //     std::string out = "[" + itr->second + "]";
+    //     cout << out << '\n';
+    // }
+
+
+    // readData4Log(file);
+    // startWebServer();
+
+
     return 0;
 }
