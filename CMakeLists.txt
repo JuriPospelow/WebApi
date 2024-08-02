@@ -7,7 +7,7 @@ project(webapi  VERSION ${PROJECT_VESRION})
 
 
 
-add_executable(webapi webapi.cpp)
+add_executable(webapi src/webapi.cpp)
 
 set_target_properties(webapi PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
