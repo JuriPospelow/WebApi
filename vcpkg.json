@@ -2,6 +2,8 @@
     "dependencies": [
         "boost-algorithm",
         "boost-tokenizer",
+        "boost-asio",
+        "boost-beast",
         "boost-json"
       ]
 }

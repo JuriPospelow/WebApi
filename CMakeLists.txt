@@ -6,7 +6,6 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 project(webapi  VERSION ${PROJECT_VESRION})
 
 
-
 add_executable(webapi src/webapi.cpp)
 
 set_target_properties(webapi PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
@@ -23,6 +22,14 @@ target_link_libraries(webapi PRIVATE Boost::algorithm)
 find_package(boost_json REQUIRED CONFIG)
 target_link_libraries(webapi PRIVATE Boost::json)
 
+find_package(boost_asio REQUIRED CONFIG)
+target_link_libraries(webapi PRIVATE Boost::asio)
+
+find_package(Boost REQUIRED COMPONENTS beast)
+target_link_libraries(webapi PRIVATE Boost::beast)
+
+find_package(boost_json CONFIG REQUIRED)
+target_link_libraries(webapi PRIVATE Boost::json)
 
 
 set(MASTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
