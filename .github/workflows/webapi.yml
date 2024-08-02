@@ -1,9 +1,24 @@
-name: 'webapi'
+# Copyright (c) 2021-2022-2023-2024 Luca Cappa
+# Released under the term specified in file LICENSE.txt
+# SPDX short identifier: MIT
 
+# A "pure" GitHub workflow using CMake, Ninja and vcpkg to build a C/C++ codebase.
+# It leverages both CMakePresets.json and vcpkg.json.
+# It is called "pure workflow" because it is an example which minimizes the usage of
+# custom GitHub Actions, but leverages directly the tools that could be easily run on
+# your development machines (i.e. CMake, vcpkg, Ninja) to ensure a perfectly identical
+# and reproducible local build (on your development machine) and a remote build on
+# build agents.
+name: hosted-pure-workflow
 on:
   push:
+  pull_request:
     branches:
-      - develop
+    - develop
+    - main
+  workflow_dispatch:
+  schedule:
+  - cron: '0 1 * * *'
 
 jobs:
   job:
@@ -69,28 +84,17 @@ jobs:
       - name: Restore from cache the dependencies and generate project files
         run: |
           cmake --preset ninja-multi-vcpkg
-      - name: Project build
-        working-directory: ./
+
+      # Build (Release configuration only) the whole project with Ninja (which is spawn by CMake).
+      #
+      # Note: if the preset misses the "configuration", it is possible to explicitly select the
+      # configuration with the `--config` flag, e.g.:
+      # run: cmake --build --preset ninja-vcpkg --config Release
+      - name: Build (Release configuration)
         run: |
-          cmake -DPATCH_VERSION=${{ github.run_number }}
           cmake --build --preset ninja-vcpkg-release
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{github.run_id}}
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./webapi-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: webapi-0.0.${{ github.run_number }}-Linux.deb
-          asset_content_type: application/vnd.debian.binary-package
+
+      # Test the whole project with CTest, again Release configuration only.
+      - name: Test (Release configuration)
+        run: |
+          ctest --preset test-release
