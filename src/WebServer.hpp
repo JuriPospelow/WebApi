@@ -16,6 +16,7 @@ class WebServer {
     MultiMap DataPrepare;
 public:
     explicit WebServer(std::string fileName);
+    void start();
 
 private:
     void readCSV(std::string file_name);
