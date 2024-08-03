@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/websocket.hpp>
@@ -11,16 +12,20 @@ namespace http = beast::http;                   // from <boost/beast/http.hpp>
 
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 
+typedef std::multimap<std::string, std::string> MultiMap;
+
 // Echoes back all received WebSocket messages
 class websocket_session : public std::enable_shared_from_this<websocket_session>
 {
     websocket::stream<beast::tcp_stream> ws_;
     beast::flat_buffer buffer_;
+    MultiMap _log_data;
 
 public:
     // Take ownership of the socket
-    explicit websocket_session(tcp::socket&& socket)
+    explicit websocket_session(tcp::socket&& socket, MultiMap & log_data)
         : ws_(std::move(socket))
+        , _log_data(log_data)
     {
     }
 

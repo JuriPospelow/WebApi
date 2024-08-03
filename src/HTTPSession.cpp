@@ -233,10 +233,8 @@ void http_session::on_read(beast::error_code ec, std::size_t bytes_transferred)
     {
         // Create a websocket session, transferring ownership
         // of both the socket and the HTTP request.
-        // std::make_shared<websocket_session>(
-        //     stream_.release_socket())->do_accept(parser_->release());
-        auto ws = std::make_shared<websocket_session>(stream_.release_socket());
-        ws->do_accept(parser_->release());
+        std::make_shared<websocket_session>(
+            stream_.release_socket(), _log_data)->do_accept(parser_->release());
         return;
     }
 

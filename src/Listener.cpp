@@ -14,10 +14,11 @@ void listener::fail(beast::error_code ec, char const* what)
 listener::listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root)
+        std::shared_ptr<std::string const> const& doc_root, MultiMap& log_data)
         : ioc_(ioc)
         , acceptor_(net::make_strand(ioc))
         , doc_root_(doc_root)
+        , _log_data(log_data)
 {
     beast::error_code ec;
 
@@ -90,7 +91,7 @@ void listener::on_accept(beast::error_code ec, tcp::socket socket)
         // Create the http session and run it
         std::make_shared<http_session>(
             std::move(socket),
-            doc_root_)->run();
+            doc_root_, _log_data)->run();
     }
 
     // Accept another connection

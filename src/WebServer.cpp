@@ -34,16 +34,16 @@ void WebServer::readCSV(std::string file_name){
         if(line.find("\n")) {
             ++cnt_eol;
             if(cnt_eol == 3){
-                DataPrepare.insert(pair<std::string, std::string>("header", line));
+                _dataPrepare.insert(pair<std::string, std::string>("header", line));
             }
         }
 
         if (cnt_eol > 3){
             if(line.find(".01.") != std::string::npos) {
-                 DataPrepare.insert(pair<std::string, std::string>("January", line));
+                 _dataPrepare.insert(pair<std::string, std::string>("January", line));
             }
             else if(line.find(".02.") != std::string::npos){
-                 DataPrepare.insert(pair<std::string, std::string>("February", line));
+                 _dataPrepare.insert(pair<std::string, std::string>("February", line));
             }
         }
 
@@ -93,7 +93,7 @@ void WebServer::start(){
     std::make_shared<listener>(
         ioc,
         tcp::endpoint{_address, _port},
-        _doc_root)->run();
+        _doc_root, _dataPrepare)->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM);

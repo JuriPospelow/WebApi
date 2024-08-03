@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <queue>
+#include <map>
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -10,12 +11,15 @@ namespace beast = boost::beast;                 // from <boost/beast.hpp>
 namespace http = beast::http;                   // from <boost/beast/http.hpp>
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 
+typedef std::multimap<std::string, std::string> MultiMap;
+
 // Handles an HTTP server connection
 class http_session : public std::enable_shared_from_this<http_session>
 {
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
     std::shared_ptr<std::string const> doc_root_;
+    MultiMap _log_data;
 
     static constexpr std::size_t queue_limit = 8; // max responses
     std::queue<http::message_generator> response_queue_;
@@ -28,9 +32,10 @@ public:
     // Take ownership of the socket
     http_session(
         tcp::socket&& socket,
-        std::shared_ptr<std::string const> const& doc_root)
+        std::shared_ptr<std::string const> const& doc_root, MultiMap& log_data)
         : stream_(std::move(socket))
         , doc_root_(doc_root)
+        , _log_data(log_data)
     {
         static_assert(queue_limit > 0,
                       "queue limit must be positive");

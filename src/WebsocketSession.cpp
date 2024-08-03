@@ -2,6 +2,7 @@
 #include "WebsocketSession.hpp"
 #include <boost/json/src.hpp> // for header-only
 #include <boost/json/value.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 // namespace json = boost::json;
@@ -52,6 +53,14 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
     // } else if (boost::beast::buffers_to_string(buffer_.data()) == "header"){
     //      buffer_.data() = "[servix, xeonix, gigantix, duomensix3, servix2, commandix, asterix, tc2, aoi2]"
     // }
+
+    MultiMap::iterator itr;
+    for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
+        boost::algorithm::trim(itr->second);
+        std::string out = "[" + itr->second + "]";
+        std::cout << out << '\n';
+    }
+
     std::vector< std::string > v1{ "servix2", "commandix" };
     value jv = value_from( v1 );
     ws_.async_write(

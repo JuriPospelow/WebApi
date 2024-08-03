@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <boost/beast/websocket.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/asio/bind_executor.hpp>
@@ -13,18 +14,21 @@ using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 namespace beast = boost::beast;                 // from <boost/beast.hpp>
 
+typedef std::multimap<std::string, std::string> MultiMap;
+
 // Accepts incoming connections and launches the sessions
 class listener : public std::enable_shared_from_this<listener>
 {
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
     std::shared_ptr<std::string const> doc_root_;
+    MultiMap _log_data;
 
 public:
     listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root);
+        std::shared_ptr<std::string const> const& doc_root, MultiMap& log_data);
 
     // Start accepting incoming connections
     void run();
