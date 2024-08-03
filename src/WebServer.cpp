@@ -7,6 +7,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
+#include "Listener.hpp"
 #include "WebServer.hpp"
 
 using namespace std;
@@ -61,10 +62,10 @@ WebServer::WebServer(std::string fileName)
 
         read_ini(fileName, config);
         file_name = config.get<std::string>("input.log_file");
-        this->_address = net::ip::make_address(config.get<std::string>("net.pc_addr"));
-        this->_port = config.get<unsigned short>("net.api_port");
-        this->_doc_root = std::make_shared<std::string>(config.get<std::string>("net.doc_root"));
-        this->_threads = config.get<int>("opt.threads");
+        _address = net::ip::make_address(config.get<std::string>("net.pc_addr"));
+        _port = config.get<unsigned short>("net.api_port");
+        _doc_root = std::make_shared<std::string>(config.get<std::string>("net.doc_root"));
+        _threads = config.get<int>("opt.threads");
 
         // std::cout << "opt.threads" << ": " << config.get<std::string>("opt.threads") <<endl;
         // std::cout << "input.log_file" << ": " << config.get<std::string>("input.log_file") <<endl;
@@ -81,4 +82,44 @@ WebServer::WebServer(std::string fileName)
     }
 
     readCSV(file_name);
+}
+
+void WebServer::start(){
+
+    // The io_context is required for all I/O
+    net::io_context ioc{_threads};
+
+    // Create and launch a listening port
+    std::make_shared<listener>(
+        ioc,
+        tcp::endpoint{_address, _port},
+        _doc_root)->run();
+
+    // Capture SIGINT and SIGTERM to perform a clean shutdown
+    net::signal_set signals(ioc, SIGINT, SIGTERM);
+    signals.async_wait(
+        [&](beast::error_code const&, int)
+        {
+            // Stop the `io_context`. This will cause `run()`
+            // to return immediately, eventually destroying the
+            // `io_context` and all of the sockets in it.
+            ioc.stop();
+        });
+
+    // Run the I/O service on the requested number of threads
+    std::vector<std::thread> v;
+    v.reserve(_threads - 1);
+    for(auto i = _threads - 1; i > 0; --i)
+        v.emplace_back(
+        [&ioc]
+        {
+            ioc.run();
+        });
+    ioc.run();
+
+    // (If we get here, it means we got a SIGINT or SIGTERM)
+
+    // Block until all the threads exit
+    for(auto& t : v)
+        t.join();
 }
