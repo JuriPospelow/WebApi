@@ -31,6 +31,8 @@ target_link_libraries(webapi PRIVATE Boost::beast)
 find_package(boost_json CONFIG REQUIRED)
 target_link_libraries(webapi PRIVATE Boost::json)
 
+find_package(boost_property_tree REQUIRED CONFIG)
+target_link_libraries(webapi PRIVATE Boost::property_tree)
 
 set(MASTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 

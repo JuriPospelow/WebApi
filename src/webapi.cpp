@@ -9,7 +9,23 @@
 
 int main(int argc, char* argv[])
 {
-    WebServer web("netlog.csv");
+    std::string fileName {"dummy.ini"};
+
+    if (argc >= 2 && argc < 3) {
+        fileName = argv[1];
+    } else {
+        std::cerr <<
+            "Usage: webapi <ini file> \n" <<
+            "Example:\n" <<
+            "    webapi dummy.ini\n";
+        return EXIT_FAILURE;
+    }
+
+    WebServer web(fileName);
+#if 0
+
+
+
 
     // MultiMap::iterator itr;
     // for (itr = DataPrepare.begin(); itr != DataPrepare.end(); ++itr) {
@@ -68,7 +84,7 @@ int main(int argc, char* argv[])
     // Block until all the threads exit
     for(auto& t : v)
         t.join();
-
+#endif
     return EXIT_SUCCESS;
     // readData4Log(file);
     // startWebServer();
