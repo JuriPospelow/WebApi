@@ -5,12 +5,14 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/websocket.hpp>
+#include <boost/json/value.hpp>
 
 namespace beast = boost::beast;                 // from <boost/beast.hpp>
 namespace websocket = beast::websocket;         // from <boost/beast/websocket.hpp>
 namespace http = beast::http;                   // from <boost/beast/http.hpp>
 
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
+using namespace boost::json;
 
 typedef std::multimap<std::string, std::string> MultiMap;
 
@@ -39,6 +41,7 @@ private:
     void do_read();
     void on_read(beast::error_code ec, std::size_t bytes_transferred);
     void on_write(beast::error_code ec, std::size_t bytes_transferred);
+    value make_json();
 };
 
 // Start the asynchronous accept operation

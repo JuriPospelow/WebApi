@@ -1,14 +1,9 @@
 #include <iostream>
 #include "WebsocketSession.hpp"
-#include <boost/json/src.hpp> // for header-only
-#include <boost/json/value.hpp>
+#include <boost/json/src.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace net = boost::asio;                    // from <boost/asio.hpp>
-// namespace json = boost::json;
-
-using namespace boost::json;
-
 
 // Report a failure
 void websocket_session::fail(beast::error_code ec, char const* what)
@@ -35,6 +30,34 @@ void websocket_session::do_read()
             shared_from_this()));
 }
 
+
+value websocket_session::make_json(){
+    std::string out{};
+    std::vector<std::string> words;
+    std::vector<std::vector<std::string>> vector_words;
+    value jv{};
+    MultiMap::iterator itr;
+
+    if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
+        itr = _log_data.find("header");
+        boost::algorithm::trim(itr->second);
+        out = itr->first + " " + itr->second;
+        boost::split(words, out, boost::is_any_of(" "), boost::token_compress_on);
+        jv = value_from(words);
+        return jv;
+    }
+
+    for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
+        if(itr->first == "January"){
+                boost::algorithm::trim(itr->second);
+                boost::split(words, itr->second, boost::is_any_of(" "), boost::token_compress_on);
+                vector_words.push_back(words);
+                jv = value_from(vector_words);
+        }
+    }
+    return jv;
+}
+
 void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transferred)
 {
     boost::ignore_unused(bytes_transferred);
@@ -48,27 +71,9 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
 
     // Echo the message
     ws_.text(ws_.got_text());
-    // if (boost::beast::buffers_to_string(buffer_.data()) == "Hello") {
-    //     std::cout <<  boost::beast::buffers_to_string(buffer_.data()) << std::endl;
-    // } else if (boost::beast::buffers_to_string(buffer_.data()) == "header"){
-    //      buffer_.data() = "[servix, xeonix, gigantix, duomensix3, servix2, commandix, asterix, tc2, aoi2]"
-    // }
 
-    MultiMap::iterator itr;
-    for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
-        boost::algorithm::trim(itr->second);
-        std::string out = "[" + itr->second + "]";
-        std::cout << out << '\n';
-    }
-
-    std::vector< std::string > v1{ "servix2", "commandix" };
-    value jv = value_from( v1 );
     ws_.async_write(
-        // buffer_.data(),
-        net::buffer(serialize(jv)),
-        // net::buffer("[\"servix\", \"xeonix\", \"gigantix\", \"duomensix3\", "servix2", "commandix", "asterix", "tc2", "aoi2"]"),
-        // net::buffer(json::value_from("[1,2,3]")),
-        // net::buffer(json::value_from("[\"servix\", \"xeonix\", \"gigantix\", \"duomensix3\"]")),
+        net::buffer(serialize(make_json())),
         beast::bind_front_handler(
             &websocket_session::on_write,
             shared_from_this()));

@@ -12,6 +12,8 @@ if (window.Worker) {
     ws = new WebSocket("ws://localhost:8080");
     ws.onopen = function(ev) {
       showMessage("[connection opened]");
+      ws.send("header");
+      ws.send("January");
     };
     ws.onclose = function(ev) {
       showMessage("[connection closed]");
@@ -19,13 +21,11 @@ if (window.Worker) {
     ws.onmessage = function(ev) {
       showMessage(ev.data);
       generateTable(ev.data);
-      // generateTable('["servix", "xeonix", "gigantix", "duomensix3", "servix2", "commandix", "asterix", "tc2", "aoi2"]');
     };
     ws.onerror = function(ev) {
       showMessage("[error]");
       console.log(ev);
     };
-    // ws.send("Hello");
 
 
     send.onclick = function(){
@@ -34,25 +34,41 @@ if (window.Worker) {
 }
 
 
-// let json_string = '["servix", "xeonix"]';
-
 function generateTable(json_string) {
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
     const tblBody = document.createElement("tbody");
 
-    // creating all cells
-    for (let i = 0; i < 2; i++) {
+    console.log(JSON.parse(json_string)[0]);
+
+    if(JSON.parse(json_string)[0] == "header"){
       // creates a table row
       const row = document.createElement("tr");
+      console.log("l: ", JSON.parse(json_string).length);
 
-      for (let j = 0; j < 2; j++) {
+      for (let j = 1; j < JSON.parse(json_string).length; j++) {
+        const cell = document.createElement("td");
+        const cellText = document.createTextNode(JSON.parse(json_string)[j]);
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+      }
+
+      // add the row to the end of the table body
+      tblBody.appendChild(row);
+
+  } else {
+    // creating all cells
+    for (let i = 0; i < JSON.parse(json_string).length; i++) {
+      // creates a table row
+      const row = document.createElement("tr");
+      console.log("l: ", JSON.parse(json_string).length);
+
+      for (let j = 0; j < JSON.parse(json_string)[0].length; j++) {
         // Create a <td> element and a text node, make the text
         // node the contents of the <td>, and put the <td> at
         // the end of the table row
         const cell = document.createElement("td");
-        const cellText = document.createTextNode(JSON.parse(json_string)[j]);
-        // const cellText = document.createTextNode(`cell in row ${i}, column ${j}`);
+        const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
         cell.appendChild(cellText);
         row.appendChild(cell);
       }
@@ -60,15 +76,14 @@ function generateTable(json_string) {
       // add the row to the end of the table body
       tblBody.appendChild(row);
     }
-
-    // put the <tbody> in the <table>
-    tbl.appendChild(tblBody);
-    // appends <table> into <body>
-    document.body.appendChild(tbl);
-    // sets the border attribute of tbl to '2'
-    tbl.setAttribute("border", "1");
   }
-
+  // put the <tbody> in the <table>
+  tbl.appendChild(tblBody);
+  // appends <table> into <body>
+  document.body.appendChild(tbl);
+  // sets the border attribute of tbl to '2'
+  tbl.setAttribute("border", "1");
+}
   // generateTable();
 //  class ParamTable
 // {
