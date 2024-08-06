@@ -4,9 +4,9 @@
 #include <map>
 #include <boost/asio.hpp>
 
-namespace net = boost::asio;                    // from <boost/asio.hpp>
+#include "MultiMap.hpp"
 
-typedef std::multimap<std::string, std::string> MultiMap;
+namespace net = boost::asio;                    // from <boost/asio.hpp>
 
 class WebServer {
     net::ip::address _address{};

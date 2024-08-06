@@ -7,14 +7,14 @@
 #include <boost/beast/websocket.hpp>
 #include <boost/json/value.hpp>
 
+#include "MultiMap.hpp"
+
 namespace beast = boost::beast;                 // from <boost/beast.hpp>
 namespace websocket = beast::websocket;         // from <boost/beast/websocket.hpp>
 namespace http = beast::http;                   // from <boost/beast/http.hpp>
 
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 using namespace boost::json;
-
-typedef std::multimap<std::string, std::string> MultiMap;
 
 // Echoes back all received WebSocket messages
 class websocket_session : public std::enable_shared_from_this<websocket_session>

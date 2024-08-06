@@ -10,11 +10,12 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
+#include "MultiMap.hpp"
+
 using tcp = boost::asio::ip::tcp;               // from <boost/asio/ip/tcp.hpp>
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 namespace beast = boost::beast;                 // from <boost/beast.hpp>
 
-typedef std::multimap<std::string, std::string> MultiMap;
 
 // Accepts incoming connections and launches the sessions
 class listener : public std::enable_shared_from_this<listener>
