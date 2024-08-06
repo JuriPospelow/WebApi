@@ -4,6 +4,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Network Monitor</title>
+  <style>
+    .centered {
+      /* background-color: #dadada; */
+      border: 1;
+      width: 70%;
+      padding: 2%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    main, body {
+      background-color:white;
+      text-align: center;
+    }
+    .pagination {
+      display: inline-block;
+    }
+
+    .pagination a {
+      color: black;
+      float: left;
+      padding: 4px 8px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #ddd;
+    }
+
+    .pagination a.active {
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid #4CAF50;
+    }
+
+    .pagination a:hover:not(.active) {background-color: #ddd;}
+    </style>
 </head>
 
 <body>
@@ -11,13 +47,19 @@
     <!-- <img src="logo.svg" alt="logo"> -->
     <p>Network Monitor</p>
   </header>
-  <button class="echo-button" id="send">Send</button>
-  <script src="script1.js" async></script>
-
+  <main>
+  <!-- <button class="echo-button" id="send">Send</button> -->
   <!-- <h1>Hier soll eine Tabelle stehen </h1> -->
+    <script src="script1.js" async></script>
+  </main>
+  <div class="pagination">
+    <a href="#">❮</a>
+    <a href="#">January 2024</a>
+    <a href="#">❯</a>
+  </div>
 
-  <!-- <footer>
+  <footer>
      <p>Version 0.0.0.0</p>
-  </footer> -->
+  </footer>
 </body>
 </html>

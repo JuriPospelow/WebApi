@@ -79,10 +79,19 @@ function generateTable(json_string) {
   }
   // put the <tbody> in the <table>
   tbl.appendChild(tblBody);
-  // appends <table> into <body>
-  document.body.appendChild(tbl);
-  // sets the border attribute of tbl to '2'
+
+
+  const main = document.getElementsByTagName('main')[0];
+  main.appendChild(tbl);
+
+  // tbl.classList.add("centered");
+
   tbl.setAttribute("border", "1");
+  tbl.setAttribute("width", "80%");
+  tbl.setAttribute("padding", "2%");
+  // tbl.setAttribute("margin-inline", "auto");
+  tbl.setAttribute("align", "center");
+
 }
   // generateTable();
 //  class ParamTable
