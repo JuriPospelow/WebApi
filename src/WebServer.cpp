@@ -24,29 +24,20 @@ void WebServer::readCSV(std::string file_name){
     vector< std::string > vec;
     std::string line;
 
-    int cnt_eol = 0;
-
     while (getline(in,line))
     {
         Tokenizer tok(line);
         vec.assign(tok.begin(),tok.end());
 
-        if(line.find("\n")) {
-            ++cnt_eol;
-            if(cnt_eol == 3){
-                _dataPrepare.insert(pair<std::string, std::string>("header", line));
-            }
+        if(line.find("Datum") != std::string::npos) {
+             _dataPrepare.insert(pair<std::string, std::string>("header", line));
         }
-
-        if (cnt_eol > 3){
-            if(line.find(".01.") != std::string::npos) {
-                 _dataPrepare.insert(pair<std::string, std::string>("January", line));
-            }
-            else if(line.find(".02.") != std::string::npos){
-                 _dataPrepare.insert(pair<std::string, std::string>("February", line));
-            }
+        else if(line.find(".01.") != std::string::npos) {
+             _dataPrepare.insert(pair<std::string, std::string>("January", line));
         }
-
+        else if(line.find(".02.") != std::string::npos){
+             _dataPrepare.insert(pair<std::string, std::string>("February", line));
+        }
     }
 }
 
