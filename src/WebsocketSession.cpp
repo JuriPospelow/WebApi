@@ -41,8 +41,9 @@ value websocket_session::make_json(){
     if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
         itr = _log_data.find("header");
         boost::algorithm::trim(itr->second);
-        out = itr->first + " " + itr->second;
-        boost::split(words, out, boost::is_any_of(" "), boost::token_compress_on);
+        boost::algorithm::trim_right_if(itr->second, boost::is_any_of(","));
+        out = itr->first + ", " + itr->second;
+        boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
         jv = value_from(words);
         return jv;
     }
@@ -50,7 +51,8 @@ value websocket_session::make_json(){
     for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
         if(itr->first == "January"){
                 boost::algorithm::trim(itr->second);
-                boost::split(words, itr->second, boost::is_any_of(" "), boost::token_compress_on);
+                boost::algorithm::trim_right_if(itr->second, boost::is_any_of(","));
+                boost::split(words, itr->second, boost::is_any_of(","), boost::token_compress_on);
                 vector_words.push_back(words);
                 jv = value_from(vector_words);
         }
