@@ -32,11 +32,17 @@ void WebServer::readCSV(std::string file_name){
         if(line.find("Datum") != std::string::npos) {
              _dataPrepare.insert(pair<std::string, std::string>("header", line));
         }
-        else if(line.find(".01.") != std::string::npos) {
-             _dataPrepare.insert(pair<std::string, std::string>("January", line));
+        else if(line.find(".01.24") != std::string::npos) {
+             _dataPrepare.insert(pair<std::string, std::string>("01.24", line));
         }
-        else if(line.find(".02.") != std::string::npos){
-             _dataPrepare.insert(pair<std::string, std::string>("February", line));
+        else if(line.find(".02.24") != std::string::npos){
+             _dataPrepare.insert(pair<std::string, std::string>("02.24", line));
+        }
+        else if(line.find(".03.24") != std::string::npos){
+             _dataPrepare.insert(pair<std::string, std::string>("03.24", line));
+        }
+        else if(line.find(".04.24") != std::string::npos){
+             _dataPrepare.insert(pair<std::string, std::string>("04.24", line));
         }
     }
 }

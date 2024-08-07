@@ -1,6 +1,7 @@
+var ws = null;
 let header;
+
 if (window.Worker) {
-    var ws = null;
     function showMessage(msg) {
     //   messages.innerText += msg + "\n";
     //   messages.scrollTop = messages.scrollHeight - messages.clientHeight;
@@ -13,7 +14,7 @@ if (window.Worker) {
     ws.onopen = function(ev) {
       showMessage("[connection opened]");
       // ws.send("header");
-      ws.send("January");
+      ws.send("01.24");
     };
     ws.onclose = function(ev) {
       showMessage("[connection closed]");
@@ -34,18 +35,35 @@ if (window.Worker) {
 }
 
 var i = 0;
-var month = ["January 2024","February 2024", "March 2024", "April 2024"];
+var monthKey = ["January 2024","February 2024", "March 2024", "April 2024"];
+var monthValue = ["01.24","02.24", "03.24", "04.24"];
+
 right.onclick = function(){
-  if(i < month.length - 1)textMidle.innerHTML = month[++i];
+  if(i < monthKey.length - 1){
+    textMidle.innerHTML = monthKey[++i];
+    ws.send(monthValue[i]);
+  }
 }
 
 left.onclick = function(){
-  if(i > 0)textMidle.innerHTML = month[--i];
+  if(i > 0){
+    textMidle.innerHTML = monthKey[--i];
+    ws.send(monthValue[i]);
+  }
 }
 
 function generateTable(json_string) {
+
+  const main = document.getElementsByTagName('main')[0];
+
+  if(document.getElementById("table") != undefined){
+    const tmp = document.getElementById("table");
+    main.removeChild(tmp);
+  }
+
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
+    tbl.id = "table";
     const tblBody = document.createElement("tbody");
 
     console.log(JSON.parse(json_string)[0]);
@@ -92,7 +110,6 @@ function generateTable(json_string) {
   tbl.appendChild(tblBody);
 
 
-  const main = document.getElementsByTagName('main')[0];
   main.appendChild(tbl);
 
   // tbl.classList.add("centered");
