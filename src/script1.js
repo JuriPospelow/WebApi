@@ -12,7 +12,7 @@ if (window.Worker) {
     ws = new WebSocket("ws://localhost:8080");
     ws.onopen = function(ev) {
       showMessage("[connection opened]");
-      ws.send("header");
+      // ws.send("header");
       ws.send("January");
     };
     ws.onclose = function(ev) {
@@ -28,9 +28,9 @@ if (window.Worker) {
     };
 
 
-    send.onclick = function(){
-      ws.send("header");
-    }
+    // send.onclick = function(){
+    //   ws.send("header");
+    // }
 }
 
 
@@ -41,22 +41,22 @@ function generateTable(json_string) {
 
     console.log(JSON.parse(json_string)[0]);
 
-    if(JSON.parse(json_string)[0] == "header"){
-      // creates a table row
-      const row = document.createElement("tr");
-      console.log("l: ", JSON.parse(json_string).length);
+  //   if(JSON.parse(json_string)[0] == "header"){
+  //     // creates a table row
+  //     const row = document.createElement("tr");
+  //     console.log("l: ", JSON.parse(json_string).length);
 
-      for (let j = 1; j < JSON.parse(json_string).length; j++) {
-        const cell = document.createElement("td");
-        const cellText = document.createTextNode(JSON.parse(json_string)[j]);
-        cell.appendChild(cellText);
-        row.appendChild(cell);
-      }
+  //     for (let j = 1; j < JSON.parse(json_string).length; j++) {
+  //       const cell = document.createElement("td");
+  //       const cellText = document.createTextNode(JSON.parse(json_string)[j]);
+  //       cell.appendChild(cellText);
+  //       row.appendChild(cell);
+  //     }
 
-      // add the row to the end of the table body
-      tblBody.appendChild(row);
+  //     // add the row to the end of the table body
+  //     tblBody.appendChild(row);
 
-  } else {
+  // } else {
     // creating all cells
     for (let i = 0; i < JSON.parse(json_string).length; i++) {
       // creates a table row
@@ -69,6 +69,8 @@ function generateTable(json_string) {
         // the end of the table row
         const cell = document.createElement("td");
         const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
+        if(cellText.data == "header") cellText.data = "Weekday";
+        if(cellText.data == "Datum") cellText.data = "Date";
         cell.appendChild(cellText);
         row.appendChild(cell);
       }
@@ -76,7 +78,7 @@ function generateTable(json_string) {
       // add the row to the end of the table body
       tblBody.appendChild(row);
     }
-  }
+  // }
   // put the <tbody> in the <table>
   tbl.appendChild(tblBody);
 

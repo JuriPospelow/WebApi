@@ -38,15 +38,16 @@ value websocket_session::make_json(){
     value jv{};
     MultiMap::iterator itr;
 
-    if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
+    // if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
         itr = _log_data.find("header");
         boost::algorithm::trim(itr->second);
         boost::algorithm::trim_right_if(itr->second, boost::is_any_of(","));
-        out = itr->first + ", " + itr->second;
+        out = itr->first + "," + itr->second;
         boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
-        jv = value_from(words);
-        return jv;
-    }
+        vector_words.push_back(words);
+    //     jv = value_from(words);
+    //     return jv;
+    // }
 
     for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
         if(itr->first == "January"){
