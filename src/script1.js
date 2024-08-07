@@ -33,6 +33,15 @@ if (window.Worker) {
     // }
 }
 
+var i = 0;
+var month = ["January 2024","February 2024", "March 2024", "April 2024"];
+right.onclick = function(){
+  if(i < month.length - 1)textMidle.innerHTML = month[++i];
+}
+
+left.onclick = function(){
+  if(i > 0)textMidle.innerHTML = month[--i];
+}
 
 function generateTable(json_string) {
     // creates a <table> element and a <tbody> element
