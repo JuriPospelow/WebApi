@@ -31,6 +31,9 @@ if (window.Worker) {
 
     state.onclick = function(){
       ws.send("actual");
+      let tmp = document.getElementById("load");
+      tmp.style.display = "block";
+
     }
 }
 
