@@ -29,9 +29,9 @@ if (window.Worker) {
     };
 
 
-    // send.onclick = function(){
-    //   ws.send("header");
-    // }
+    state.onclick = function(){
+      ws.send("actual");
+    }
 }
 
 var i = 0;
@@ -55,6 +55,12 @@ left.onclick = function(){
 function generateTable(json_string) {
 
   const main = document.getElementsByTagName('main')[0];
+
+  if(JSON.parse(json_string)[0] == "actual"){
+    console.info("actual");
+    return;
+  }
+
 
   if(document.getElementById("table") != undefined){
     const tmp = document.getElementById("table");
