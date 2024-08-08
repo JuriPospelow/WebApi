@@ -38,6 +38,11 @@ value websocket_session::make_json(){
     value jv{};
     MultiMap::iterator itr;
 
+    if(boost::beast::buffers_to_string(buffer_.data()) == "actual"){
+        std::cout << "ACTUAL"<< std::endl;
+        return jv;
+    }
+
     // if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
         itr = _log_data.find("header");
         boost::algorithm::trim(itr->second); //ToDo: remove all Spaces

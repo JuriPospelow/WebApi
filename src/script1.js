@@ -29,9 +29,9 @@ if (window.Worker) {
     };
 
 
-    // send.onclick = function(){
-    //   ws.send("header");
-    // }
+    state.onclick = function(){
+      ws.send("actual");
+    }
 }
 
 var i = 0;
