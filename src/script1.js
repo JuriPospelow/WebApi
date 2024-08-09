@@ -68,35 +68,35 @@ function tableActualState(json_string) {
     const tmp = document.getElementById("tableAS");
     main.removeChild(tmp);
   }
-  // if(JSON.parse(json_string)[0] == "actual"){
-  //   console.info("actual");
-  //   document.getElementById("load").style.display = "none";
-  //   main = document.getElementsByTagName('footer_table')[0];
-  //   // return;
-  // }
+
+
+  // console.log("TA1: ", JSON.parse(json_string)[1]);
+  // console.log("TA10: ", JSON.parse(json_string)[1][0]);
+  // console.log("TA2: ", JSON.parse(json_string)[2]);
+  // console.log("TA20: ", JSON.parse(json_string)[2][0]);
+
 
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
     tbl.id = "tableAS";
     const tblBody = document.createElement("tbody");
 
-    console.log(JSON.parse(json_string)[0]);
+    // console.log(JSON.parse(json_string)[0]);
 
 
     // creating all cells
-    for (let i = 0; i < JSON.parse(json_string)[1].length; i++) {
+    for (let i = 1; i < JSON.parse(json_string).length; i++) {
       // creates a table row
       const row = document.createElement("tr");
-      console.log("l: ", JSON.parse(json_string)[1].length);
-      console.log("l2: ", JSON.parse(json_string)[2].length);
 
-      for (let j = 0; j < JSON.parse(json_string)[2].length; j++) {
+      for (let j = 0; j < JSON.parse(json_string)[1].length; j++) {
         // Create a <td> element and a text node, make the text
         // node the contents of the <td>, and put the <td> at
         // the end of the table row
+
         const cell = document.createElement("td");
         const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
-        if(cellText.data == "header") cellText.data = "Weekday";
+        if(cellText.data == "header") cellText.data = "Time";
         if(cellText.data == "Datum") cellText.data = "Date";
         cell.appendChild(cellText);
         row.appendChild(cell);
