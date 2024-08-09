@@ -31,8 +31,7 @@ if (window.Worker) {
 
     state.onclick = function(){
       ws.send("actual");
-      let tmp = document.getElementById("load");
-      tmp.style.display = "block";
+      document.getElementById("load").style.display = "block";
 
     }
 }
@@ -61,6 +60,7 @@ function generateTable(json_string) {
 
   if(JSON.parse(json_string)[0] == "actual"){
     console.info("actual");
+    document.getElementById("load").style.display = "none";
     return;
   }
 

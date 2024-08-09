@@ -34,6 +34,9 @@ target_link_libraries(webapi PRIVATE Boost::json)
 find_package(boost_property_tree REQUIRED CONFIG)
 target_link_libraries(webapi PRIVATE Boost::property_tree)
 
+find_package(boost_process REQUIRED CONFIG)
+target_link_libraries(webapi PRIVATE Boost::process)
+
 set(MASTER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 install(TARGETS webapi RUNTIME DESTINATION bin)

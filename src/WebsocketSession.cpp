@@ -30,6 +30,46 @@ void websocket_session::do_read()
             shared_from_this()));
 }
 
+#include <boost/process/system.hpp>
+#include <boost/process/io.hpp>
+#include <boost/asio/io_service.hpp>
+#include <fstream>
+
+void read_state(std::vector<std::string>& data)
+{
+    namespace bp = boost::process;
+    // bp::ipstream is; //reading pipe-stream
+    // bp::child c("/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/build/netlog", "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/home.ini", bp::std_out > is);
+
+    // // std::vector<std::string> data;
+    // std::string line;
+
+    // while (c.running() && std::getline(is, line) && !line.empty())
+    //     {
+    //         data.push_back(line);
+    //         std::cout <<"read_state: " << line << std::endl;
+    //     }
+
+    // c.wait();
+
+    std::string prog = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/build/netlog";
+    std::string arg = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/home.ini";
+    bp::system(prog, arg);
+
+    std::ifstream myfile ("/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/netlog_new.csv");
+    std::string mystring;
+
+    if ( myfile.is_open() ) {
+        while ( myfile.good() ) {
+            myfile >> mystring;
+            std::cout  <<"read_state: " << mystring << std::endl;
+        }
+    }
+    data.push_back(mystring);
+
+    return;
+}
+
 
 value websocket_session::make_json(){
     std::string out{};
@@ -41,6 +81,12 @@ value websocket_session::make_json(){
     if(boost::beast::buffers_to_string(buffer_.data()) == "actual"){
         std::cout << "ACTUAL"<< std::endl;
         words.push_back("actual");
+        // words.push_back("08.08.24,off,off,off,off,");
+        read_state(words);
+
+        // boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
+
+        // vector_words.push_back(words);
         jv = value_from(words);
         return jv;
     }
