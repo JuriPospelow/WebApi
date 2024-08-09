@@ -35,22 +35,13 @@ void websocket_session::do_read()
 #include <boost/asio/io_service.hpp>
 #include <fstream>
 
-void read_state(std::vector<std::string>& data)
+#include <iomanip>
+#include <chrono>
+#include <ctime>
+
+std::string  read_state()
 {
     namespace bp = boost::process;
-    // bp::ipstream is; //reading pipe-stream
-    // bp::child c("/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/build/netlog", "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/home.ini", bp::std_out > is);
-
-    // // std::vector<std::string> data;
-    // std::string line;
-
-    // while (c.running() && std::getline(is, line) && !line.empty())
-    //     {
-    //         data.push_back(line);
-    //         std::cout <<"read_state: " << line << std::endl;
-    //     }
-
-    // c.wait();
 
     std::string prog = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/build/netlog";
     std::string arg = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/home.ini";
@@ -65,12 +56,19 @@ void read_state(std::vector<std::string>& data)
             std::cout  <<"read_state: " << mystring << std::endl;
         }
     }
-    data.push_back(mystring);
 
-    return;
+    std::time_t t = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::tm ltime;
+    localtime_r(&t, &ltime);
+    std::stringstream transTime;
+    transTime << std::put_time(&ltime, "%H:%M:%S");
+    // std::cout << std::put_time(&ltime, "%H:%M:%S") << '\n';
+
+    boost::algorithm::trim_right_if(mystring, boost::is_any_of(","));
+    return (transTime.str() + "," + mystring);
 }
 
-
+//ToDo: improve algorithm
 value websocket_session::make_json(){
     std::string out{};
     std::vector<std::string> words;
@@ -78,29 +76,21 @@ value websocket_session::make_json(){
     value jv{};
     MultiMap::iterator itr;
 
-    if(boost::beast::buffers_to_string(buffer_.data()) == "actual"){
-        std::cout << "ACTUAL"<< std::endl;
-        words.push_back("actual");
-        // words.push_back("08.08.24,off,off,off,off,");
-        read_state(words);
+    itr = _log_data.find("header");
+    boost::algorithm::trim(itr->second); //ToDo: remove all Spaces
+    boost::algorithm::trim_right_if(itr->second, boost::is_any_of(","));
+    out = itr->first + "," + itr->second;
+    boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
 
-        // boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
-
-        // vector_words.push_back(words);
-        jv = value_from(words);
+    if(boost::beast::buffers_to_string(buffer_.data()) == "actual") vector_words.push_back(std::vector<std::string> {"actual"});
+    vector_words.push_back(words);
+    if(boost::beast::buffers_to_string(buffer_.data()) == "actual") {
+        boost::split(words, read_state(), boost::is_any_of(","), boost::token_compress_on);
+        vector_words.push_back(words);
+        jv = value_from(vector_words);
         return jv;
     }
 
-    // if(boost::beast::buffers_to_string(buffer_.data()) == "header"){
-        itr = _log_data.find("header");
-        boost::algorithm::trim(itr->second); //ToDo: remove all Spaces
-        boost::algorithm::trim_right_if(itr->second, boost::is_any_of(","));
-        out = itr->first + "," + itr->second;
-        boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
-        vector_words.push_back(words);
-    //     jv = value_from(words);
-    //     return jv;
-    // }
 
     for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
         if(itr->first == boost::beast::buffers_to_string(buffer_.data())){

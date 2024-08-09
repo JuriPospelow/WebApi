@@ -21,7 +21,11 @@ if (window.Worker) {
     };
     ws.onmessage = function(ev) {
       showMessage(ev.data);
-      generateTable(ev.data);
+      if(JSON.parse(ev.data)[0][0] == "actual"){
+        tableActualState(ev.data);
+      } else {
+        generateTable(ev.data);
+      }
     };
     ws.onerror = function(ev) {
       showMessage("[error]");
@@ -54,21 +58,86 @@ left.onclick = function(){
   }
 }
 
+
+function tableActualState(json_string) {
+  console.log("tableActualState");
+  let main = document.getElementsByTagName('footer_table')[0];
+  document.getElementById("load").style.display = "none";
+
+  if(document.getElementById("tableAS") != undefined){
+    const tmp = document.getElementById("tableAS");
+    main.removeChild(tmp);
+  }
+  // if(JSON.parse(json_string)[0] == "actual"){
+  //   console.info("actual");
+  //   document.getElementById("load").style.display = "none";
+  //   main = document.getElementsByTagName('footer_table')[0];
+  //   // return;
+  // }
+
+    // creates a <table> element and a <tbody> element
+    const tbl = document.createElement("table");
+    tbl.id = "tableAS";
+    const tblBody = document.createElement("tbody");
+
+    console.log(JSON.parse(json_string)[0]);
+
+
+    // creating all cells
+    for (let i = 0; i < JSON.parse(json_string)[1].length; i++) {
+      // creates a table row
+      const row = document.createElement("tr");
+      console.log("l: ", JSON.parse(json_string)[1].length);
+      console.log("l2: ", JSON.parse(json_string)[2].length);
+
+      for (let j = 0; j < JSON.parse(json_string)[2].length; j++) {
+        // Create a <td> element and a text node, make the text
+        // node the contents of the <td>, and put the <td> at
+        // the end of the table row
+        const cell = document.createElement("td");
+        const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
+        if(cellText.data == "header") cellText.data = "Weekday";
+        if(cellText.data == "Datum") cellText.data = "Date";
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+      }
+
+      // add the row to the end of the table body
+      tblBody.appendChild(row);
+    }
+  // }
+  // put the <tbody> in the <table>
+  tbl.appendChild(tblBody);
+
+
+  main.appendChild(tbl);
+
+  // tbl.classList.add("centered");
+
+  tbl.setAttribute("border", "1");
+  tbl.setAttribute("width", "80%");
+  tbl.setAttribute("padding", "2%");
+  // tbl.setAttribute("margin-inline", "auto");
+  tbl.setAttribute("align", "center");
+
+}
+
 function generateTable(json_string) {
 
-  const main = document.getElementsByTagName('main')[0];
-
-  if(JSON.parse(json_string)[0] == "actual"){
-    console.info("actual");
-    document.getElementById("load").style.display = "none";
-    return;
-  }
-
-
+  let main = document.getElementsByTagName('main')[0];
   if(document.getElementById("table") != undefined){
     const tmp = document.getElementById("table");
     main.removeChild(tmp);
   }
+
+  if(JSON.parse(json_string)[0] == "actual"){
+    console.info("actual");
+    document.getElementById("load").style.display = "none";
+    main = document.getElementsByTagName('footer_table')[0];
+    // return;
+  }
+
+
 
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
