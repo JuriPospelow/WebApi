@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <regex>
 
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
@@ -13,36 +14,36 @@
 using namespace std;
 using namespace boost;
 
+
 void WebServer::readCSV(std::string file_name){
     std::string data(file_name);
 
     ifstream in(data.c_str());
     if (!in.is_open()) return ;
 
-    typedef tokenizer< escaped_list_separator<char> > Tokenizer;
+    // typedef tokenizer< escaped_list_separator<char> > Tokenizer;
 
     vector< std::string > vec;
     std::string line;
 
     while (getline(in,line))
     {
-        Tokenizer tok(line);
-        vec.assign(tok.begin(),tok.end());
+        // Tokenizer tok(line);
+        // vec.assign(tok.begin(),tok.end());
+
+        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); // remove ALL spaces ion line
+        boost::algorithm::trim_right_if(line, boost::is_any_of(",")); // remove "," on the line end
+        // std::cout<<line<<std::endl;
+
+        std::regex datum_regex("([0-90-9]{2})."
+                               "([0-90-9]{2})."
+                               "([0-90-9]{2})");
+        std::smatch datum_match;
 
         if(line.find("Datum") != std::string::npos) {
              _dataPrepare.insert(pair<std::string, std::string>("header", line));
-        }
-        else if(line.find(".01.24") != std::string::npos) {
-             _dataPrepare.insert(pair<std::string, std::string>("01.24", line));
-        }
-        else if(line.find(".02.24") != std::string::npos){
-             _dataPrepare.insert(pair<std::string, std::string>("02.24", line));
-        }
-        else if(line.find(".03.24") != std::string::npos){
-             _dataPrepare.insert(pair<std::string, std::string>("03.24", line));
-        }
-        else if(line.find(".04.24") != std::string::npos){
-             _dataPrepare.insert(pair<std::string, std::string>("04.24", line));
+        } else if (std::regex_search(line, datum_match, datum_regex)){
+            _dataPrepare.insert(pair<std::string, std::string>((datum_match[2].str() + "." + datum_match[3].str()), line));
         }
     }
 }
