@@ -43,7 +43,7 @@ private:
     void do_read();
     void on_read(beast::error_code ec, std::size_t bytes_transferred);
     void on_write(beast::error_code ec, std::size_t bytes_transferred);
-    value make_json();
+    value handle_request();
     std::string  read_state();
 };
 

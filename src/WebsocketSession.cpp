@@ -69,7 +69,7 @@ std::string  websocket_session::read_state()
 }
 
 //ToDo: improve algorithm
-value websocket_session::make_json(){
+value websocket_session::handle_request(){
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
@@ -109,11 +109,13 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
 
     if(ec) fail(ec, "read");
 
+    auto msg  = serialize(handle_request());
+
     // This sets all outgoing messages to be sent as text.
     ws_.text(ws_.got_text());
 
     ws_.async_write(
-        net::buffer(serialize(make_json())),
+        std::move(net::buffer(msg)),
         beast::bind_front_handler(
             &websocket_session::on_write,
             shared_from_this()));
