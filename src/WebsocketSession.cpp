@@ -109,13 +109,11 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
     boost::ignore_unused(bytes_transferred);
 
     // This indicates that the websocket_session was closed
-    if(ec == websocket::error::closed)
-        return;
+    if(ec == websocket::error::closed) return;
 
-    if(ec)
-        fail(ec, "read");
+    if(ec) fail(ec, "read");
 
-    // Echo the message
+    // This sets all outgoing messages to be sent as text.
     ws_.text(ws_.got_text());
 
     ws_.async_write(

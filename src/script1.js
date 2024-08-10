@@ -36,7 +36,6 @@ if (window.Worker) {
     state.onclick = function(){
       ws.send("actual");
       document.getElementById("load").style.display = "block";
-
     }
 }
 
@@ -69,55 +68,40 @@ function tableActualState(json_string) {
     main.removeChild(tmp);
   }
 
-
   // console.log("TA1: ", JSON.parse(json_string)[1]);
   // console.log("TA10: ", JSON.parse(json_string)[1][0]);
   // console.log("TA2: ", JSON.parse(json_string)[2]);
   // console.log("TA20: ", JSON.parse(json_string)[2][0]);
-
 
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
     tbl.id = "tableAS";
     const tblBody = document.createElement("tbody");
 
-    // console.log(JSON.parse(json_string)[0]);
-
-
     // creating all cells
-    for (let i = 1; i < JSON.parse(json_string).length; i++) {
+    for (let cntArraysInPkg = 1; cntArraysInPkg < JSON.parse(json_string).length; cntArraysInPkg++) {
       // creates a table row
       const row = document.createElement("tr");
 
-      for (let j = 0; j < JSON.parse(json_string)[1].length; j++) {
-        // Create a <td> element and a text node, make the text
-        // node the contents of the <td>, and put the <td> at
-        // the end of the table row
-
+      for (let cntStringsInArray = 0; cntStringsInArray < JSON.parse(json_string)[1].length; cntStringsInArray++) {
         const cell = document.createElement("td");
-        const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
+        const cellText = document.createTextNode(JSON.parse(json_string)[cntArraysInPkg][cntStringsInArray]);
         if(cellText.data == "header") cellText.data = "Time";
         if(cellText.data == "Datum") cellText.data = "Date";
         cell.appendChild(cellText);
         row.appendChild(cell);
       }
-
       // add the row to the end of the table body
       tblBody.appendChild(row);
     }
-  // }
-  // put the <tbody> in the <table>
+
   tbl.appendChild(tblBody);
 
-
   main.appendChild(tbl);
-
-  // tbl.classList.add("centered");
 
   tbl.setAttribute("border", "1");
   tbl.setAttribute("width", "80%");
   tbl.setAttribute("padding", "2%");
-  // tbl.setAttribute("margin-inline", "auto");
   tbl.setAttribute("align", "center");
 
 }
@@ -130,38 +114,11 @@ function generateTable(json_string) {
     main.removeChild(tmp);
   }
 
-  if(JSON.parse(json_string)[0] == "actual"){
-    console.info("actual");
-    document.getElementById("load").style.display = "none";
-    main = document.getElementsByTagName('footer_table')[0];
-    // return;
-  }
-
-
-
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
     tbl.id = "table";
     const tblBody = document.createElement("tbody");
 
-    console.log(JSON.parse(json_string)[0]);
-
-  //   if(JSON.parse(json_string)[0] == "header"){
-  //     // creates a table row
-  //     const row = document.createElement("tr");
-  //     console.log("l: ", JSON.parse(json_string).length);
-
-  //     for (let j = 1; j < JSON.parse(json_string).length; j++) {
-  //       const cell = document.createElement("td");
-  //       const cellText = document.createTextNode(JSON.parse(json_string)[j]);
-  //       cell.appendChild(cellText);
-  //       row.appendChild(cell);
-  //     }
-
-  //     // add the row to the end of the table body
-  //     tblBody.appendChild(row);
-
-  // } else {
     // creating all cells
     for (let i = 0; i < JSON.parse(json_string).length; i++) {
       // creates a table row
@@ -179,23 +136,17 @@ function generateTable(json_string) {
         cell.appendChild(cellText);
         row.appendChild(cell);
       }
-
       // add the row to the end of the table body
       tblBody.appendChild(row);
     }
-  // }
-  // put the <tbody> in the <table>
+
   tbl.appendChild(tblBody);
 
-
   main.appendChild(tbl);
-
-  // tbl.classList.add("centered");
 
   tbl.setAttribute("border", "1");
   tbl.setAttribute("width", "80%");
   tbl.setAttribute("padding", "2%");
-  // tbl.setAttribute("margin-inline", "auto");
   tbl.setAttribute("align", "center");
 
 }
