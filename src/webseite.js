@@ -1,62 +1,66 @@
-var ws = null;
-let header;
+function info(msg, ...param)
+{
+  console.info(msg, ...param);
+}
 
 if (window.Worker) {
-    function showMessage(msg) {
-    //   messages.innerText += msg + "\n";
-    //   messages.scrollTop = messages.scrollHeight - messages.clientHeight;
-    header = msg;
-
-        console.info(msg);
-    };
-
-    ws = new WebSocket("ws://localhost:8080");
-    ws.onopen = function(ev) {
-      showMessage("[connection opened]");
-      // ws.send("header");
-      ws.send("01.24");
-    };
-    ws.onclose = function(ev) {
-      showMessage("[connection closed]");
-    };
-    ws.onmessage = function(ev) {
-      showMessage(ev.data);
-      if(JSON.parse(ev.data)[0][0] == "actual"){
-        tableActualState(ev.data);
-      } else {
-        generateTable(ev.data);
-      }
-    };
-    ws.onerror = function(ev) {
-      showMessage("[error]");
-      console.log(ev);
-    };
-
-
-    state.onclick = function(){
-      ws.send("actual");
-      document.getElementById("load").style.display = "block";
+// --------------------------- ----------------------------------------------------------
+// --------------------------- COMMUNICATION --------------------------------------------
+// --------------------------- ----------------------------------------------------------
+  const ws = new WebSocket("ws://localhost:8080");
+  ws.onopen = function(ev) {
+    info("[connection opened]");
+    // ws.send("header");
+    ws.send("01.24");
+  };
+  ws.onclose = function(ev) {
+    info("[connection closed]");
+  };
+  ws.onmessage = function(ev) {
+    info(ev.data);
+    if(JSON.parse(ev.data)[0][0] == "actual"){
+      tableActualState(ev.data);
+    } else {
+      generateTable(ev.data);
     }
-}
+  };
+  ws.onerror = function(ev) {
+    info("[error]");
+    console.log(ev);
+  };
 
-var i = 0;
-var monthKey = ["January 2024","February 2024", "March 2024", "April 2024"];
-var monthValue = ["01.24","02.24", "03.24", "04.24"];
+// --------------------------- ----------------------------------------------------------
+// --------------------------- BUTTONS --------------------------------------------
+// --------------------------- ----------------------------------------------------------
 
-right.onclick = function(){
-  if(i < monthKey.length - 1){
-    textMidle.innerHTML = monthKey[++i];
-    ws.send(monthValue[i]);
+  state.onclick = function(){
+    ws.send("actual");
+    document.getElementById("load").style.display = "block";
   }
-}
 
-left.onclick = function(){
-  if(i > 0){
-    textMidle.innerHTML = monthKey[--i];
-    ws.send(monthValue[i]);
+  var i = 0;
+  var monthKey = ["January 2024","February 2024", "March 2024", "April 2024"];
+  var monthValue = ["01.24","02.24", "03.24", "04.24"];
+
+  right.onclick = function(){
+    if(i < monthKey.length - 1){
+      textMidle.innerHTML = monthKey[++i];
+      ws.send(monthValue[i]);
+    }
   }
+
+  left.onclick = function(){
+    if(i > 0){
+      textMidle.innerHTML = monthKey[--i];
+      ws.send(monthValue[i]);
+    }
+  }
+
 }
 
+// --------------------------- ----------------------------------------------------------
+// --------------------------- HELP FUNCTIONS --------------------------------------------
+// --------------------------- ----------------------------------------------------------
 
 function tableActualState(json_string) {
   console.log("tableActualState");
@@ -150,50 +154,3 @@ function generateTable(json_string) {
   tbl.setAttribute("align", "center");
 
 }
-  // generateTable();
-//  class ParamTable
-// {
-
-//   constructor(parent){
-//     //- let data = JSON.parse(info).data;
-//     this.tbl = document.createElement("table");
-//     this.tblHead = document.createElement("thead");
-//     this.tblBody = document.createElement("tbody");
-//     // put the <tbody> in the <table>
-//     this.tbl.appendChild(this.tblHead);
-//     this.tbl.appendChild(this.tblBody);
-//     parent.appendChild(this.tbl);
-//   }
-
-//   tableHead(){  // TABLE HEAD
-//     // creates a table row
-
-//     const row = document.createElement("tr");
-//     row.id = "headParam";
-
-//     for (let i_laser = 0; i_laser < 1; i_laser++) {
-
-//       const cell = document.createElement("td");
-//       let cellText;
-//       if(i_laser==0) {
-//         cellText = document.createTextNode("PARAMETERS");
-//       } else {
-//         // cellText = document.createTextNode(this.data_laser[i_laser-1].name.toUpperCase());
-//       }
-//       cell.appendChild(cellText);
-//       row.appendChild(cell);
-//     }
-
-//     // add the row to the end of the table body
-//     this.tblHead.appendChild(row);
-//   }
-
-// }
-
-// const main = document.getElementsByTagName('main')[0];
-// this.paramConfigT = document.createElement("div");
-// this.paramConfigT.id = "ParamConfig";
-// this.paramConfigT.classList.add("tab-wrap");
-// main.appendChild(this.paramConfigT);
-
-// tabelle = new ParamTable(main);
