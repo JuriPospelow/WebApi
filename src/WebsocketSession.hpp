@@ -22,12 +22,14 @@ class websocket_session : public std::enable_shared_from_this<websocket_session>
     websocket::stream<beast::tcp_stream> ws_;
     beast::flat_buffer buffer_;
     MultiMap _log_data;
+    MultiMap _ini_data;
 
 public:
     // Take ownership of the socket
-    explicit websocket_session(tcp::socket&& socket, MultiMap & log_data)
+    explicit websocket_session(tcp::socket&& socket, MultiMap & log_data, MultiMap & ini_data)
         : ws_(std::move(socket))
         , _log_data(log_data)
+        , _ini_data(ini_data)
     {
     }
 
@@ -42,6 +44,7 @@ private:
     void on_read(beast::error_code ec, std::size_t bytes_transferred);
     void on_write(beast::error_code ec, std::size_t bytes_transferred);
     value make_json();
+    std::string  read_state();
 };
 
 // Start the asynchronous accept operation

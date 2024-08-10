@@ -20,6 +20,7 @@ class http_session : public std::enable_shared_from_this<http_session>
     beast::flat_buffer buffer_;
     std::shared_ptr<std::string const> doc_root_;
     MultiMap _log_data;
+    MultiMap _ini_data;
 
     static constexpr std::size_t queue_limit = 8; // max responses
     std::queue<http::message_generator> response_queue_;
@@ -32,10 +33,14 @@ public:
     // Take ownership of the socket
     http_session(
         tcp::socket&& socket,
-        std::shared_ptr<std::string const> const& doc_root, MultiMap& log_data)
+        std::shared_ptr<std::string const> const& doc_root,
+        MultiMap& log_data,
+        MultiMap& ini_data
+        )
         : stream_(std::move(socket))
         , doc_root_(doc_root)
         , _log_data(log_data)
+        , _ini_data(ini_data)
     {
         static_assert(queue_limit > 0,
                       "queue limit must be positive");

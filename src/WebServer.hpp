@@ -14,6 +14,7 @@ class WebServer {
     std::shared_ptr<std::string> _doc_root{};
     int _threads{};
     MultiMap _dataPrepare;
+    MultiMap _dataIni;
 public:
     explicit WebServer(std::string fileName);
     void start();

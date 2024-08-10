@@ -59,11 +59,23 @@ WebServer::WebServer(std::string fileName)
         std::cout << "read " << fileName << "\n";
 
         read_ini(fileName, config);
-        file_name = config.get<std::string>("input.log_file");
+        file_name = config.get<std::string>("netlog.log_file");
+        _dataIni.insert(pair<std::string, std::string>("log_file", config.get<std::string>("netlog.log_file")));
+
         _address = net::ip::make_address(config.get<std::string>("net.pc_addr"));
+        _dataIni.insert(pair<std::string, std::string>("pc_addr", config.get<std::string>("net.pc_addr")));
+
         _port = config.get<unsigned short>("net.api_port");
+        _dataIni.insert(pair<std::string, std::string>("api_port", config.get<std::string>("net.api_port")));
+
         _doc_root = std::make_shared<std::string>(config.get<std::string>("net.doc_root"));
+        _dataIni.insert(pair<std::string, std::string>("doc_root", config.get<std::string>("net.doc_root")));
+
         _threads = config.get<int>("opt.threads");
+        _dataIni.insert(pair<std::string, std::string>("threads", config.get<std::string>("opt.threads")));
+
+        _dataIni.insert(pair<std::string, std::string>("programm", config.get<std::string>("netlog.programm")));
+        _dataIni.insert(pair<std::string, std::string>("ini_file", config.get<std::string>("netlog.ini_file")));
 
         // std::cout << "opt.threads" << ": " << config.get<std::string>("opt.threads") <<endl;
         // std::cout << "input.log_file" << ": " << config.get<std::string>("input.log_file") <<endl;
@@ -91,7 +103,7 @@ void WebServer::start(){
     std::make_shared<listener>(
         ioc,
         tcp::endpoint{_address, _port},
-        _doc_root, _dataPrepare)->run();
+        _doc_root, _dataPrepare, _dataIni)->run();
 
     // Capture SIGINT and SIGTERM to perform a clean shutdown
     net::signal_set signals(ioc, SIGINT, SIGTERM);

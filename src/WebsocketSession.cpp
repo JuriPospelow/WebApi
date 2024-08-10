@@ -39,21 +39,21 @@ void websocket_session::do_read()
 #include <chrono>
 #include <ctime>
 
-std::string  read_state()
+std::string  websocket_session::read_state()
 {
     namespace bp = boost::process;
 
-    std::string prog = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/build/netlog";
-    std::string arg = "/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/home.ini";
+    std::string prog = _ini_data.find("programm")->second;
+    std::string arg = _ini_data.find("ini_file")->second;
     bp::system(prog, arg);
 
-    std::ifstream myfile ("/home/juri/Schreibtisch/LearnCPP_020923/otus/netlog/netlog_new.csv");
-    std::string mystring;
+    std::ifstream ini_file (_ini_data.find("log_file")->second);
+    std::string ini_line;
 
-    if ( myfile.is_open() ) {
-        while ( myfile.good() ) {
-            myfile >> mystring;
-            std::cout  <<"read_state: " << mystring << std::endl;
+    if (ini_file.is_open() ) {
+        while (ini_file.good()) {
+            ini_file >> ini_line;
+            std::cout  <<"read_state: " << ini_line << std::endl;
         }
     }
 
@@ -64,8 +64,8 @@ std::string  read_state()
     transTime << std::put_time(&ltime, "%H:%M:%S");
     // std::cout << std::put_time(&ltime, "%H:%M:%S") << '\n';
 
-    boost::algorithm::trim_right_if(mystring, boost::is_any_of(","));
-    return (transTime.str() + "," + mystring);
+    boost::algorithm::trim_right_if(ini_line, boost::is_any_of(","));
+    return (transTime.str() + "," + ini_line);
 }
 
 //ToDo: improve algorithm
