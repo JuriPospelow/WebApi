@@ -7,11 +7,19 @@ if (window.Worker) {
 // --------------------------- ----------------------------------------------------------
 // --------------------------- COMMUNICATION --------------------------------------------
 // --------------------------- ----------------------------------------------------------
+  let datum;
   const ws = new WebSocket("ws://localhost:8080");
+
   ws.onopen = function(ev) {
     info("[connection opened]");
     ws.send("month_keys");
-    ws.send("01.24");
+    const d = new Date();
+    const month = d.getMonth() + 1 >=10? d.getMonth() +1  : "0" + (d.getMonth() +1);
+    const year =  (d.getFullYear() -2000);
+    datum = month + "." + year;
+    // console.debug(datum);
+    textMidle.innerHTML = datum;
+    ws.send(datum);
   };
   ws.onclose = function(ev) {
     info("[connection closed]");
@@ -35,12 +43,13 @@ if (window.Worker) {
 // --------------------------- BUTTONS --------------------------------------------
 // --------------------------- ----------------------------------------------------------
 var monthKey = [];
+var i = 0;
 
  function getMonthKey(json_string){
    for (let cntStringsInArray = 0; cntStringsInArray < JSON.parse(json_string)[1].length; cntStringsInArray++) {
      monthKey[cntStringsInArray] = JSON.parse(json_string)[1][cntStringsInArray];
-     console.log("monthKey:" , monthKey[cntStringsInArray]);
-
+     if(datum == JSON.parse(json_string)[1][cntStringsInArray]) i = cntStringsInArray;
+    //  console.log("monthKey:" , monthKey[cntStringsInArray]);
     }
  }
 
@@ -48,8 +57,6 @@ var monthKey = [];
     ws.send("actual");
     document.getElementById("load").style.display = "block";
   }
-
-  var i = 0;
 
   right.onclick = function(){
     if(i < monthKey.length - 1){
@@ -72,7 +79,7 @@ var monthKey = [];
 // --------------------------- ----------------------------------------------------------
 
 function generateTable(json_string, table_place, table_ud) {
-  console.log("tableActualState");
+  // console.log("generateTable");
   let main = document.getElementsByTagName(table_place)[0];
   if(table_ud == "tableAS") document.getElementById("load").style.display = "none";
 
