@@ -10,7 +10,7 @@ if (window.Worker) {
   const ws = new WebSocket("ws://localhost:8080");
   ws.onopen = function(ev) {
     info("[connection opened]");
-    // ws.send("header");
+    ws.send("month_keys");
     ws.send("01.24");
   };
   ws.onclose = function(ev) {
@@ -18,10 +18,12 @@ if (window.Worker) {
   };
   ws.onmessage = function(ev) {
     info(ev.data);
-    if(JSON.parse(ev.data)[0][0] == "actual"){
-      tableActualState(ev.data);
+    if(JSON.parse(ev.data)[0][0] == "month_keys"){
+      getMonthKey(ev.data);
+    } else if(JSON.parse(ev.data)[0][0] == "actual"){
+      generateTable(ev.data, 'footer_table', "tableAS");
     } else {
-      generateTable(ev.data);
+      generateTable(ev.data, 'main', "table");
     }
   };
   ws.onerror = function(ev) {
@@ -32,6 +34,15 @@ if (window.Worker) {
 // --------------------------- ----------------------------------------------------------
 // --------------------------- BUTTONS --------------------------------------------
 // --------------------------- ----------------------------------------------------------
+var monthKey = [];
+
+ function getMonthKey(json_string){
+   for (let cntStringsInArray = 0; cntStringsInArray < JSON.parse(json_string)[1].length; cntStringsInArray++) {
+     monthKey[cntStringsInArray] = JSON.parse(json_string)[1][cntStringsInArray];
+     console.log("monthKey:" , monthKey[cntStringsInArray]);
+
+    }
+ }
 
   state.onclick = function(){
     ws.send("actual");
@@ -39,20 +50,18 @@ if (window.Worker) {
   }
 
   var i = 0;
-  var monthKey = ["January 2024","February 2024", "March 2024", "April 2024"];
-  var monthValue = ["01.24","02.24", "03.24", "04.24"];
 
   right.onclick = function(){
     if(i < monthKey.length - 1){
       textMidle.innerHTML = monthKey[++i];
-      ws.send(monthValue[i]);
+      ws.send(monthKey[i]);
     }
   }
 
   left.onclick = function(){
     if(i > 0){
       textMidle.innerHTML = monthKey[--i];
-      ws.send(monthValue[i]);
+      ws.send(monthKey[i]);
     }
   }
 
@@ -62,13 +71,13 @@ if (window.Worker) {
 // --------------------------- HELP FUNCTIONS --------------------------------------------
 // --------------------------- ----------------------------------------------------------
 
-function tableActualState(json_string) {
+function generateTable(json_string, table_place, table_ud) {
   console.log("tableActualState");
-  let main = document.getElementsByTagName('footer_table')[0];
-  document.getElementById("load").style.display = "none";
+  let main = document.getElementsByTagName(table_place)[0];
+  if(table_ud == "tableAS") document.getElementById("load").style.display = "none";
 
-  if(document.getElementById("tableAS") != undefined){
-    const tmp = document.getElementById("tableAS");
+  if(document.getElementById(table_ud) != undefined){
+    const tmp = document.getElementById(table_ud);
     main.removeChild(tmp);
   }
 
@@ -79,7 +88,7 @@ function tableActualState(json_string) {
 
     // creates a <table> element and a <tbody> element
     const tbl = document.createElement("table");
-    tbl.id = "tableAS";
+    tbl.id = table_ud;
     const tblBody = document.createElement("tbody");
 
     // creating all cells
@@ -90,52 +99,7 @@ function tableActualState(json_string) {
       for (let cntStringsInArray = 0; cntStringsInArray < JSON.parse(json_string)[1].length; cntStringsInArray++) {
         const cell = document.createElement("td");
         const cellText = document.createTextNode(JSON.parse(json_string)[cntArraysInPkg][cntStringsInArray]);
-        if(cellText.data == "header") cellText.data = "Time";
-        if(cellText.data == "Datum") cellText.data = "Date";
-        cell.appendChild(cellText);
-        row.appendChild(cell);
-      }
-      // add the row to the end of the table body
-      tblBody.appendChild(row);
-    }
-
-  tbl.appendChild(tblBody);
-
-  main.appendChild(tbl);
-
-  tbl.setAttribute("border", "1");
-  tbl.setAttribute("width", "80%");
-  tbl.setAttribute("padding", "2%");
-  tbl.setAttribute("align", "center");
-
-}
-
-function generateTable(json_string) {
-
-  let main = document.getElementsByTagName('main')[0];
-  if(document.getElementById("table") != undefined){
-    const tmp = document.getElementById("table");
-    main.removeChild(tmp);
-  }
-
-    // creates a <table> element and a <tbody> element
-    const tbl = document.createElement("table");
-    tbl.id = "table";
-    const tblBody = document.createElement("tbody");
-
-    // creating all cells
-    for (let i = 0; i < JSON.parse(json_string).length; i++) {
-      // creates a table row
-      const row = document.createElement("tr");
-      console.log("l: ", JSON.parse(json_string).length);
-
-      for (let j = 0; j < JSON.parse(json_string)[0].length; j++) {
-        // Create a <td> element and a text node, make the text
-        // node the contents of the <td>, and put the <td> at
-        // the end of the table row
-        const cell = document.createElement("td");
-        const cellText = document.createTextNode(JSON.parse(json_string)[i][j]);
-        if(cellText.data == "header") cellText.data = "Weekday";
+        if(cellText.data == "header") cellText.data = table_ud == "tableAS"? "Time" : "Weekday";
         if(cellText.data == "Datum") cellText.data = "Date";
         cell.appendChild(cellText);
         row.appendChild(cell);

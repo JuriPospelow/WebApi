@@ -38,6 +38,7 @@ void websocket_session::do_read()
 #include <iomanip>
 #include <chrono>
 #include <ctime>
+#include <regex>
 
 std::string  websocket_session::read_state()
 {
@@ -68,30 +69,60 @@ std::string  websocket_session::read_state()
     return (transTime.str() + "," + ini_line);
 }
 
+template<typename Container>
+std::vector<typename Container::key_type> UniqueKeysNumbers (const Container &A)
+{
+std::vector<typename Container::key_type> v;
+auto prevIter = A.begin ();
+
+for (auto iter = A.begin (); iter != A.end(); ++iter)
+    {
+    if (prevIter->first == iter->first)
+        continue;
+
+    if(!std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$"))) v.push_back (prevIter->first);
+    // std::cout << "T: " << prevIter->first << std::endl;
+    prevIter = iter;
+    }
+
+if (prevIter != A.end () && !std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$")))
+    v.push_back (prevIter->first);
+
+return v;
+}
+
+
 //ToDo: improve algorithm
-value websocket_session::handle_request(){
+value websocket_session::handle_request(std::string request_tag, MultiMap& data){
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
     value jv{};
     MultiMap::iterator itr;
 
-    itr = _log_data.find("header");
+    vector_words.push_back(std::vector<std::string> {request_tag});
+
+    if(request_tag == "month_keys"){
+        // std::vector<std::string> tmp = UniqueKeysNumbers<MultiMap>(data);
+        vector_words.push_back(UniqueKeysNumbers<MultiMap>(data));
+        jv = value_from(vector_words);
+        return jv;
+    }
+
+    itr = data.find("header");
     out = itr->first + "," + itr->second;
     boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
-
-    if(boost::beast::buffers_to_string(buffer_.data()) == "actual") vector_words.push_back(std::vector<std::string> {"actual"});
     vector_words.push_back(words);
-    if(boost::beast::buffers_to_string(buffer_.data()) == "actual") {
+
+    if(request_tag == "actual") {
         boost::split(words, read_state(), boost::is_any_of(","), boost::token_compress_on);
         vector_words.push_back(words);
         jv = value_from(vector_words);
         return jv;
     }
 
-
-    for (itr = _log_data.begin(); itr != _log_data.end(); ++itr) {
-        if(itr->first == boost::beast::buffers_to_string(buffer_.data())){
+    for (itr = data.begin(); itr != data.end(); ++itr) {
+        if(itr->first == request_tag){
                 boost::split(words, itr->second, boost::is_any_of(","), boost::token_compress_on);
                 vector_words.push_back(words);
                 jv = value_from(vector_words);
@@ -109,7 +140,7 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
 
     if(ec) fail(ec, "read");
 
-    auto msg  = serialize(handle_request());
+    auto msg  = serialize(handle_request(boost::beast::buffers_to_string(buffer_.data()), _log_data));
 
     // This sets all outgoing messages to be sent as text.
     ws_.text(ws_.got_text());
