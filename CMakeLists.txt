@@ -13,9 +13,6 @@ set_target_properties(webapi PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON
 # lots of warnings and all warnings as errors
 target_compile_options(webapi PRIVATE -Wall -Wextra -pedantic -Werror -g)
 
-find_package(boost_tokenizer CONFIG REQUIRED)
-target_link_libraries(webapi PRIVATE Boost::tokenizer)
-
 find_package(boost_algorithm CONFIG REQUIRED)
 target_link_libraries(webapi PRIVATE Boost::algorithm)
 
@@ -27,9 +24,6 @@ target_link_libraries(webapi PRIVATE Boost::asio)
 
 find_package(Boost REQUIRED COMPONENTS beast)
 target_link_libraries(webapi PRIVATE Boost::beast)
-
-find_package(boost_json CONFIG REQUIRED)
-target_link_libraries(webapi PRIVATE Boost::json)
 
 find_package(boost_property_tree REQUIRED CONFIG)
 target_link_libraries(webapi PRIVATE Boost::property_tree)

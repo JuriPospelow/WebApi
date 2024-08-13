@@ -3,7 +3,6 @@
 #include <vector>
 #include <regex>
 
-#include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -21,16 +20,11 @@ void WebServer::readCSV(std::string file_name){
     ifstream in(data.c_str());
     if (!in.is_open()) return ;
 
-    // typedef tokenizer< escaped_list_separator<char> > Tokenizer;
-
     vector< std::string > vec;
     std::string line;
 
     while (getline(in,line))
     {
-        // Tokenizer tok(line);
-        // vec.assign(tok.begin(),tok.end());
-
         line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); // remove ALL spaces ion line
         boost::algorithm::trim_right_if(line, boost::is_any_of(",")); // remove "," on the line end
         // std::cout<<line<<std::endl;
