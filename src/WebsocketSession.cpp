@@ -1,7 +1,7 @@
 #include <iostream>
 #include "WebsocketSession.hpp"
 #include <boost/json/src.hpp>
-#include <boost/algorithm/string.hpp>
+
 
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 
@@ -93,14 +93,14 @@ return v;
 
 
 //ToDo: improve algorithm
-value websocket_session::handle_request(std::string request_tag, MultiMap& data){
+value websocket_session::handle_request(std::string_view request_tag, MultiMap& data){
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
     value jv{};
     MultiMap::iterator itr;
 
-    vector_words.push_back(std::vector<std::string> {request_tag});
+    vector_words.push_back(std::vector<std::string> {request_tag.data()});
 
     if(request_tag == "month_keys"){
         // std::vector<std::string> tmp = UniqueKeysNumbers<MultiMap>(data);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <string_view>
 #include <boost/asio.hpp>
 
 #include "DataWebApi.hpp"
@@ -16,9 +16,9 @@ class WebServer {
     MultiMap _dataPrepare;
     MultiMap _dataIni;
 public:
-    explicit WebServer(std::string fileName);
+    explicit WebServer(std::string_view fileName);
     void start();
 
 private:
-    void readCSV(std::string file_name);
+    void readCSV(std::string_view file_name);
 };

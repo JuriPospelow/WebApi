@@ -14,10 +14,9 @@ using namespace std;
 using namespace boost;
 
 
-void WebServer::readCSV(std::string file_name){
-    std::string data(file_name);
+void WebServer::readCSV(std::string_view file_name){
 
-    ifstream in(data.c_str());
+    ifstream in(file_name.data());
     if (!in.is_open()) return ;
 
     vector< std::string > vec;
@@ -42,7 +41,7 @@ void WebServer::readCSV(std::string file_name){
     }
 }
 
-WebServer::WebServer(std::string fileName)
+WebServer::WebServer(std::string_view fileName)
 {
 
     boost::property_tree::ptree config;
@@ -52,7 +51,8 @@ WebServer::WebServer(std::string fileName)
     {
         std::cout << "read " << fileName << "\n";
 
-        read_ini(fileName, config);
+        // read_ini(static_cast<std::string>(fileName), config);
+        read_ini(fileName.data(), config);
         file_name = config.get<std::string>("netlog.log_file");
         _dataIni.insert(pair<std::string, std::string>("log_file", config.get<std::string>("netlog.log_file")));
 
