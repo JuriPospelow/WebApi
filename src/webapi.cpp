@@ -1,9 +1,6 @@
 #include <iostream>
-#include <thread>
-#include <vector>
 
 #include "WebServer.hpp"
-#include "HTTPSession.hpp"
 
 
 int main(int argc, char* argv[])
@@ -24,15 +21,5 @@ int main(int argc, char* argv[])
     web.start();
 
     return EXIT_SUCCESS;
-
-    // MultiMap::iterator itr;
-    // for (itr = DataPrepare.begin(); itr != DataPrepare.end(); ++itr) {
-    //     trim(itr->second);
-    //     std::string out = "[" + itr->second + "]";
-    //     cout << out << '\n';
-    // }
-
-    // readData4Log(file);
-    // startWebServer();
 
 }
