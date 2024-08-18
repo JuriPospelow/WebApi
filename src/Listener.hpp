@@ -22,17 +22,14 @@ class listener : public std::enable_shared_from_this<listener>
 {
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    std::shared_ptr<std::string const> doc_root_;
-    MultiMap _log_data;
-    MultiMap _ini_data;
+    std::shared_ptr<struct DataWebApi const> data_files;
 
 public:
     listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root,
-        MultiMap& log_data,
-        MultiMap& ini_data);
+        std::shared_ptr<struct DataWebApi const> const& data_files
+    );
 
     // Start accepting incoming connections
     void run();

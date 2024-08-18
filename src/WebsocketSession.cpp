@@ -44,11 +44,11 @@ std::string  websocket_session::read_state()
 {
     namespace bp = boost::process;
 
-    std::string prog = _ini_data.find("programm")->second;
-    std::string arg = _ini_data.find("ini_file")->second;
+    std::string prog = data_files->dataIni.find("programm")->second;
+    std::string arg = data_files->dataIni.find("ini_file")->second;
     bp::system(prog, arg);
 
-    std::ifstream ini_file (_ini_data.find("log_file")->second);
+    std::ifstream ini_file (data_files->dataIni.find("log_file")->second);
     std::string ini_line;
 
     if (ini_file.is_open() ) {
@@ -93,12 +93,11 @@ return v;
 
 
 //ToDo: improve algorithm
-value websocket_session::handle_request(std::string_view request_tag, MultiMap& data){
+value websocket_session::handle_request(std::string_view request_tag,  const MultiMap& data){
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
     value jv{};
-    MultiMap::iterator itr;
 
     vector_words.push_back(std::vector<std::string> {request_tag.data()});
 
@@ -109,7 +108,7 @@ value websocket_session::handle_request(std::string_view request_tag, MultiMap& 
         return jv;
     }
 
-    itr = data.find("header");
+    auto itr = data.find("header");
     out = itr->first + "," + itr->second;
     boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
     vector_words.push_back(words);
@@ -140,7 +139,7 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
 
     if(ec) fail(ec, "read");
 
-    auto msg  = serialize(handle_request(boost::beast::buffers_to_string(buffer_.data()), _log_data));
+    auto msg  = serialize(handle_request(boost::beast::buffers_to_string(buffer_.data()), data_files->dataLog));
 
     // This sets all outgoing messages to be sent as text.
     ws_.text(ws_.got_text());

@@ -234,12 +234,12 @@ void http_session::on_read(beast::error_code ec, std::size_t bytes_transferred)
         // Create a websocket session, transferring ownership
         // of both the socket and the HTTP request.
         std::make_shared<websocket_session>(
-            stream_.release_socket(), _log_data, _ini_data)->do_accept(parser_->release());
+            stream_.release_socket(), data_files)->do_accept(parser_->release());
         return;
     }
 
     // Send the response
-    queue_write(handle_request(*doc_root_, parser_->release()));
+    queue_write(handle_request(data_files->dataIni.find("doc_root")->second, parser_->release()));
 
     // If we aren't at the queue limit, try to pipeline another request
     if (response_queue_.size() < queue_limit)

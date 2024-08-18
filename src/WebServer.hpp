@@ -9,12 +9,12 @@
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 
 class WebServer {
+    struct DataWebApi _data{};
     net::ip::address _address{};
     unsigned short _port {};
-    std::shared_ptr<std::string> _doc_root{};
+    std::shared_ptr<struct DataWebApi> data_files{};
     int _threads{};
-    MultiMap _dataPrepare;
-    MultiMap _dataIni;
+
 public:
     explicit WebServer(std::string_view fileName);
     void start();

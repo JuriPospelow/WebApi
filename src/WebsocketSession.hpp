@@ -21,15 +21,13 @@ class websocket_session : public std::enable_shared_from_this<websocket_session>
 {
     websocket::stream<beast::tcp_stream> ws_;
     beast::flat_buffer buffer_;
-    MultiMap _log_data;
-    MultiMap _ini_data;
+    std::shared_ptr<struct DataWebApi const> data_files;
 
 public:
     // Take ownership of the socket
-    explicit websocket_session(tcp::socket&& socket, MultiMap & log_data, MultiMap & ini_data)
+    explicit websocket_session(tcp::socket&& socket, std::shared_ptr<struct DataWebApi const> & data_files)
         : ws_(std::move(socket))
-        , _log_data(log_data)
-        , _ini_data(ini_data)
+        , data_files(data_files)
     {
     }
 
@@ -43,7 +41,7 @@ private:
     void do_read();
     void on_read(beast::error_code ec, std::size_t bytes_transferred);
     void on_write(beast::error_code ec, std::size_t bytes_transferred);
-    value handle_request(std::string_view request_tag, MultiMap& data);
+    value handle_request(std::string_view request_tag, const MultiMap& data);
     std::string  read_state();
 };
 
