@@ -19,7 +19,6 @@ void WebServer::readCSV(std::string_view file_name){
     ifstream in(file_name.data());
     if (!in.is_open()) return ;
 
-    vector< std::string > vec;
     std::string line;
 
     while (getline(in,line))
@@ -44,7 +43,7 @@ WebServer::WebServer(std::string_view fileName)
 {
 
     boost::property_tree::ptree config;
-    std::string file_name{};
+    std::string file_name;
 
     data_files =std::make_shared<struct DataWebApi>(_data);
 

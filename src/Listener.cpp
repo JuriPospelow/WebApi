@@ -1,12 +1,14 @@
 #include <iostream>
 #include <boost/beast/core/bind_handler.hpp>
+#include <boost/asio/strand.hpp>
+
 #include "Listener.hpp"
 #include "HTTPSession.hpp"
 
 namespace beast = boost::beast;                 // from <boost/beast.hpp>
 
 // Report a failure
-void listener::fail(beast::error_code ec, char const* what)
+void listener::fail(const beast::error_code& ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
@@ -79,7 +81,7 @@ void listener::do_accept()
             shared_from_this()));
 }
 
-void listener::on_accept(beast::error_code ec, tcp::socket socket)
+void listener::on_accept(const beast::error_code& ec, tcp::socket socket)
 {
     if(ec)
     {

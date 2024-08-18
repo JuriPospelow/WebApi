@@ -1,13 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <map>
 #include <boost/beast/websocket.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/dispatch.hpp>
-#include <boost/asio/signal_set.hpp>
-#include <boost/asio/strand.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
 #include "DataWebApi.hpp"
@@ -36,7 +30,7 @@ public:
 
 private:
 // Report a failure
-    void fail(beast::error_code ec, char const* what);
+    void fail(const beast::error_code& ec, char const* what);
     void do_accept();
-    void on_accept(beast::error_code ec, tcp::socket socket);
+    void on_accept(const beast::error_code& ec, tcp::socket socket);
 };
