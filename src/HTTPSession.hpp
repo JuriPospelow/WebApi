@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <queue>
-#include <map>
 
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
@@ -18,10 +17,11 @@ class http_session : public std::enable_shared_from_this<http_session>
 {
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
-    std::shared_ptr<struct DataWebApi const> data_files;
+    std::shared_ptr<struct DataWebApi const> & data_files;
 
     static constexpr std::size_t queue_limit = 8; // max responses
     std::queue<http::message_generator> response_queue_;
+
 
     // The parser is stored in an optional container so we can
     // construct it from scratch it at the beginning of each new message.
@@ -31,7 +31,7 @@ public:
     // Take ownership of the socket
     http_session(
         tcp::socket&& socket,
-        std::shared_ptr<struct DataWebApi const> const& data_files
+        std::shared_ptr<struct DataWebApi const> & data_files
         )
         : stream_(std::move(socket))
         , data_files(data_files)
