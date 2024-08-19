@@ -1,17 +1,26 @@
 #include <iostream>
-#include "WebsocketSession.hpp"
-#include <boost/json/src.hpp>
+#include <fstream>
+#include <iomanip>
+#include <chrono>
+#include <ctime>
+#include <regex>
 
+#include <boost/json/src.hpp>
+#include <boost/process/system.hpp>
+#include <boost/process/io.hpp>
+#include <boost/asio/io_service.hpp>
+
+#include "WebsocketSession.hpp"
 
 namespace net = boost::asio;                    // from <boost/asio.hpp>
 
 // Report a failure
-void websocket_session::fail(beast::error_code ec, char const* what)
+void websocket_session::fail(const beast::error_code& ec, char const* what) const
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
 
-void websocket_session::on_accept(beast::error_code ec)
+void websocket_session::on_accept(const beast::error_code& ec)
 {
     if(ec)
         return fail(ec, "accept");
@@ -30,17 +39,7 @@ void websocket_session::do_read()
             shared_from_this()));
 }
 
-#include <boost/process/system.hpp>
-#include <boost/process/io.hpp>
-#include <boost/asio/io_service.hpp>
-#include <fstream>
-
-#include <iomanip>
-#include <chrono>
-#include <ctime>
-#include <regex>
-
-std::string  websocket_session::read_state()
+std::string  websocket_session::read_state() const
 {
     namespace bp = boost::process;
 
@@ -54,7 +53,7 @@ std::string  websocket_session::read_state()
     if (ini_file.is_open() ) {
         while (ini_file.good()) {
             ini_file >> ini_line;
-            std::cout  <<"read_state: " << ini_line << std::endl;
+            // std::cout  <<"read_state: " << ini_line << std::endl;
         }
     }
 
@@ -93,7 +92,8 @@ return v;
 
 
 //ToDo: improve algorithm
-value websocket_session::handle_request(std::string_view request_tag,  const MultiMap& data){
+value websocket_session::handle_request(std::string_view request_tag) const {
+    const MultiMap& data =  data_files->dataLog;
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
@@ -102,7 +102,6 @@ value websocket_session::handle_request(std::string_view request_tag,  const Mul
     vector_words.push_back(std::vector<std::string> {request_tag.data()});
 
     if(request_tag == "month_keys"){
-        // std::vector<std::string> tmp = UniqueKeysNumbers<MultiMap>(data);
         vector_words.push_back(UniqueKeysNumbers<MultiMap>(data));
         jv = value_from(vector_words);
         return jv;
@@ -130,7 +129,7 @@ value websocket_session::handle_request(std::string_view request_tag,  const Mul
     return jv;
 }
 
-void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transferred)
+void websocket_session::on_read(const beast::error_code& ec, std::size_t bytes_transferred)
 {
     boost::ignore_unused(bytes_transferred);
 
@@ -139,7 +138,7 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
 
     if(ec) fail(ec, "read");
 
-    auto msg  = serialize(handle_request(boost::beast::buffers_to_string(buffer_.data()), data_files->dataLog));
+    auto msg  = serialize(handle_request(boost::beast::buffers_to_string(buffer_.data())));
 
     // This sets all outgoing messages to be sent as text.
     ws_.text(ws_.got_text());
@@ -151,7 +150,7 @@ void websocket_session::on_read(beast::error_code ec, std::size_t bytes_transfer
             shared_from_this()));
 }
 
-void websocket_session::on_write(beast::error_code ec, std::size_t bytes_transferred)
+void websocket_session::on_write(const beast::error_code& ec, std::size_t bytes_transferred)
 {
     boost::ignore_unused(bytes_transferred);
 

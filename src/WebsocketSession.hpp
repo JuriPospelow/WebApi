@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <map>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/websocket.hpp>
@@ -21,7 +20,7 @@ class websocket_session : public std::enable_shared_from_this<websocket_session>
 {
     websocket::stream<beast::tcp_stream> ws_;
     beast::flat_buffer buffer_;
-    std::shared_ptr<struct DataWebApi const> data_files;
+    std::shared_ptr<struct DataWebApi const>& data_files;
 
 public:
     // Take ownership of the socket
@@ -36,13 +35,13 @@ public:
     void do_accept(http::request<Body, http::basic_fields<Allocator>> req);
 
 private:
-    void fail(beast::error_code ec, char const* what);
-    void on_accept(beast::error_code ec);
+    void fail(const beast::error_code& ec, char const* what) const;
+    void on_accept(const beast::error_code& ec);
     void do_read();
-    void on_read(beast::error_code ec, std::size_t bytes_transferred);
-    void on_write(beast::error_code ec, std::size_t bytes_transferred);
-    value handle_request(std::string_view request_tag, const MultiMap& data);
-    std::string  read_state();
+    void on_read(const beast::error_code& ec, std::size_t bytes_transferred);
+    void on_write(const beast::error_code& ec, std::size_t bytes_transferred);
+    value handle_request(std::string_view request_tag) const;
+    std::string read_state() const;
 };
 
 // Start the asynchronous accept operation
