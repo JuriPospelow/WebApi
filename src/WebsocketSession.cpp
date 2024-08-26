@@ -99,7 +99,7 @@ value websocket_session::handle_request(std::string_view request_tag) const {
     std::vector<std::vector<std::string>> vector_words;
     value jv{};
 
-    vector_words.push_back(std::vector<std::string> {request_tag.data()});
+    vector_words.emplace_back(std::vector<std::string> {request_tag.data()});
 
     if(request_tag == "month_keys"){
         vector_words.push_back(UniqueKeysNumbers<MultiMap>(data));
