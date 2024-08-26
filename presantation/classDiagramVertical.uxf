@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>30</y>
+      <w>330</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;WebServer&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void start()/
+--
+Responsibilities
+-- read all needed data from ini and csf files
+-- start Listener
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>260</y>
+      <w>330</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;Listener&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void run()/
+--
+Responsibilities
+-- accepting incoming connections
+-- start Http Session
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>490</y>
+      <w>330</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;HTTPSession&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void run()/
+--
+Responsibilities
+-- handle http requests
+-- load webseite
+-- start Websocket Session
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>720</y>
+      <w>330</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;WebsocketSession&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void do_accept(request)/
+--
+Responsibilities
+-- bidirectional communication with webseite 
+-- read actual network state
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

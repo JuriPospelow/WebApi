@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>90</y>
+      <w>320</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;WebServer&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void start()/
+--
+Responsibilities
+-- read all needed data from ini and csf files
+-- start Listener
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>410</x>
+      <y>90</y>
+      <w>320</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;Listener&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void run()/
+--
+Responsibilities
+-- accepting incoming connections
+-- start Http Session
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>770</x>
+      <y>90</y>
+      <w>320</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;HTTPSession&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void run()/
+--
+Responsibilities
+-- handle http requests
+-- load webseite
+-- start Websocket Session
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1130</x>
+      <y>90</y>
+      <w>330</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>
+*&lt;&lt;WebsocketSession&gt;&gt;*
+
+--
+-dataIni: MultiMap
+-dataLog: MultiMap
+--
+#Operation:
+/void do_accept(request)/
+--
+Responsibilities
+-- bidirectional communication with webseite 
+-- read actual network state
+bg=ORANGE</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>190</y>
+      <w>70</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>720</x>
+      <y>190</y>
+      <w>70</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1080</x>
+      <y>190</y>
+      <w>70</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>
