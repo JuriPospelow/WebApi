@@ -44,8 +44,10 @@ std::string  websocket_session::read_state() const
     namespace bp = boost::process;
 
     std::string prog = data_files->dataIni.find("programm")->second;
-    std::string arg = data_files->dataIni.find("ini_file")->second;
-    bp::system(prog, arg);
+    std::string arg1 = data_files->dataIni.find("appiIni")->second;
+    std::string arg2 = data_files->dataIni.find("networkIni")->second;
+
+    bp::system(prog, arg1, arg2);
 
     std::ifstream ini_file (data_files->dataIni.find("log_file")->second);
     std::string ini_line;

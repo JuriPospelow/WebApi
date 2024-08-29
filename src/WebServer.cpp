@@ -67,7 +67,8 @@ WebServer::WebServer(std::string_view fileName)
         data_files->dataIni.insert(pair<std::string, std::string>("threads", config.get<std::string>("opt.threads")));
 
         data_files->dataIni.insert(pair<std::string, std::string>("programm", config.get<std::string>("netlog.programm")));
-        data_files->dataIni.insert(pair<std::string, std::string>("ini_file", config.get<std::string>("netlog.ini_file")));
+        data_files->dataIni.insert(pair<std::string, std::string>("appiIni", config.get<std::string>("netlog.appiIni")));
+        data_files->dataIni.insert(pair<std::string, std::string>("networkIni", config.get<std::string>("netlog.networkIni")));
 
     }
     catch (boost::property_tree::ini_parser_error& error)
