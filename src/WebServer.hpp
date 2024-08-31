@@ -18,6 +18,4 @@ public:
     explicit WebServer(std::string_view fileName);
     void start();
 
-private:
-    void readCSV(std::string_view file_name);
 };

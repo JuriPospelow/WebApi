@@ -14,31 +14,6 @@ using namespace std;
 using namespace boost;
 
 
-void WebServer::readCSV(std::string_view file_name){
-
-    ifstream in(file_name.data());
-    if (!in.is_open()) return ;
-
-    std::string line;
-
-    while (getline(in,line))
-    {
-        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); // remove ALL spaces ion line
-        boost::algorithm::trim_right_if(line, boost::is_any_of(",")); // remove "," on the line end
-
-        std::regex datum_regex("([0-90-9]{2})."
-                               "([0-90-9]{2})."
-                               "([0-90-9]{2})");
-        std::smatch datum_match;
-
-        if(line.find("Datum") != std::string::npos) {
-            data_files->dataLog.insert(pair<std::string, std::string>("header", line));
-        } else if (std::regex_search(line, datum_match, datum_regex)){
-            data_files->dataLog.insert(pair<std::string, std::string>((datum_match[2].str() + "." + datum_match[3].str()), line));
-        }
-    }
-}
-
 WebServer::WebServer(std::string_view fileName)
 {
 
@@ -79,7 +54,6 @@ WebServer::WebServer(std::string_view fileName)
             << error.line() << std::endl;
     }
 
-    readCSV(file_name);
 }
 
 void WebServer::start(){
