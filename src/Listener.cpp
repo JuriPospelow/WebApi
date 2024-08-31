@@ -16,7 +16,7 @@ void listener::fail(const beast::error_code& ec, char const* what)
 listener::listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<struct DataWebApi const> const& data_files)
+        std::shared_ptr<struct DataWebApi> const& data_files)
         : ioc_(ioc)
         , acceptor_(net::make_strand(ioc))
         , data_files(data_files)

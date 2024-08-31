@@ -20,11 +20,11 @@ class websocket_session : public std::enable_shared_from_this<websocket_session>
 {
     websocket::stream<beast::tcp_stream> ws_;
     beast::flat_buffer buffer_;
-    std::shared_ptr<struct DataWebApi const>& data_files;
+    std::shared_ptr<struct DataWebApi>& data_files;
 
 public:
     // Take ownership of the socket
-    explicit websocket_session(tcp::socket&& socket, std::shared_ptr<struct DataWebApi const> & data_files)
+    explicit websocket_session(tcp::socket&& socket, std::shared_ptr<struct DataWebApi> & data_files)
         : ws_(std::move(socket))
         , data_files(data_files)
     {

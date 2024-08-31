@@ -16,13 +16,13 @@ class listener : public std::enable_shared_from_this<listener>
 {
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    std::shared_ptr<struct DataWebApi const> data_files;
+    std::shared_ptr<struct DataWebApi> data_files;
 
 public:
     listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<struct DataWebApi const> const& data_files
+        std::shared_ptr<struct DataWebApi> const& data_files
     );
 
     // Start accepting incoming connections
