@@ -8,7 +8,9 @@ if (window.Worker) {
 // --------------------------- COMMUNICATION --------------------------------------------
 // --------------------------- ----------------------------------------------------------
   let datum;
-  const ws = new WebSocket("ws://localhost:8080");
+  const ws = new WebSocket("ws://192.168.0.114:8080");
+  // const ws = new WebSocket("ws://10.81.10.145:8080");
+  // const ws = new WebSocket("ws://localhost:8080");
 
   ws.onopen = function(ev) {
     info("[connection opened]");
@@ -43,12 +45,12 @@ if (window.Worker) {
 // --------------------------- BUTTONS --------------------------------------------
 // --------------------------- ----------------------------------------------------------
 var monthKey = [];
-var i = 0;
+var i = -1;
 
  function getMonthKey(json_string){
    for (let cntStringsInArray = 0; cntStringsInArray < JSON.parse(json_string)[1].length; cntStringsInArray++) {
      monthKey[cntStringsInArray] = JSON.parse(json_string)[1][cntStringsInArray];
-     if(datum == JSON.parse(json_string)[1][cntStringsInArray]) i = cntStringsInArray;
+     if(i == -1 && datum == JSON.parse(json_string)[1][cntStringsInArray]) i = cntStringsInArray;
     //  console.log("monthKey:" , monthKey[cntStringsInArray]);
     }
  }
@@ -59,6 +61,7 @@ var i = 0;
   }
 
   right.onclick = function(){
+    ws.send("month_keys");
     if(i < monthKey.length - 1){
       textMidle.innerHTML = monthKey[++i];
       ws.send(monthKey[i]);
@@ -66,6 +69,7 @@ var i = 0;
   }
 
   left.onclick = function(){
+    ws.send("month_keys");
     if(i > 0){
       textMidle.innerHTML = monthKey[--i];
       ws.send(monthKey[i]);
