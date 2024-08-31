@@ -73,23 +73,23 @@ std::string  websocket_session::read_state() const
 template<typename Container>
 std::vector<typename Container::key_type> UniqueKeysNumbers (const Container &A)
 {
-std::vector<typename Container::key_type> v;
-auto prevIter = A.begin ();
+    std::vector<typename Container::key_type> v;
+    auto prevIter = A.begin ();
 
-for (auto iter = A.begin (); iter != A.end(); ++iter)
-    {
-    if (prevIter->first == iter->first)
-        continue;
+    for (auto iter = A.begin (); iter != A.end(); ++iter)
+        {
+        if (prevIter->first == iter->first)
+            continue;
 
-    if(!std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$"))) v.push_back (prevIter->first);
-    // std::cout << "T: " << prevIter->first << std::endl;
-    prevIter = iter;
-    }
+        if(!std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$"))) v.push_back (prevIter->first);
+        // std::cout << "T: " << prevIter->first << std::endl;
+        prevIter = iter;
+        }
 
-if (prevIter != A.end () && !std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$")))
-    v.push_back (prevIter->first);
+    if (prevIter != A.end () && !std::regex_match(prevIter->first, std::regex("^[A-Za-z]+$")))
+        v.push_back (prevIter->first);
 
-return v;
+    return v;
 }
 
 void websocket_session::readCSV(std::string_view file_name){
