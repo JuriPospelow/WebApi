@@ -40,8 +40,9 @@ private:
     void do_read();
     void on_read(const beast::error_code& ec, std::size_t bytes_transferred);
     void on_write(const beast::error_code& ec, std::size_t bytes_transferred);
-    value handle_request(std::string_view request_tag) const;
+    value handle_request(std::string_view request_tag);
     std::string read_state() const;
+    void readCSV(std::string_view file_name);
 };
 
 // Start the asynchronous accept operation

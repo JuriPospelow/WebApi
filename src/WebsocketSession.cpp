@@ -92,16 +92,47 @@ if (prevIter != A.end () && !std::regex_match(prevIter->first, std::regex("^[A-Z
 return v;
 }
 
+void websocket_session::readCSV(std::string_view file_name){
 
-//ToDo: improve algorithm
-value websocket_session::handle_request(std::string_view request_tag) const {
-    const MultiMap& data =  data_files->dataLog;
+    std::ifstream in(file_name.data());
+    if (!in.is_open()) return ;
+
+    std::string line;
+
+    data_files->dataLog.clear();
+
+    while (getline(in,line))
+    {
+        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end()); // remove ALL spaces ion line
+        boost::algorithm::trim_right_if(line, boost::is_any_of(",")); // remove "," on the line end
+
+        std::regex datum_regex("([0-90-9]{2})."
+                               "([0-90-9]{2})."
+                               "([0-90-9]{2})");
+        std::smatch datum_match;
+
+        if(line.find("Datum") != std::string::npos) {
+            data_files->dataLog.insert(std::pair<std::string, std::string>("header", line));
+        } else if (std::regex_search(line, datum_match, datum_regex)){
+            data_files->dataLog.insert(std::pair<std::string, std::string>((datum_match[2].str() + "." + datum_match[3].str()), line));
+        }
+    }
+}
+
+value websocket_session::handle_request(std::string_view request_tag) {
+    MultiMap& data =  data_files->dataLog;
     std::string out{};
     std::vector<std::string> words;
     std::vector<std::vector<std::string>> vector_words;
     value jv{};
 
+    std::cout << "request_tag: " << request_tag << std::endl;
+
     vector_words.emplace_back(std::vector<std::string> {request_tag.data()});
+
+    // std::cout << "refresh" << std::endl;
+    readCSV(data_files->dataIni.find("log_file")->second);
+    data =  data_files->dataLog;
 
     if(request_tag == "month_keys"){
         vector_words.push_back(UniqueKeysNumbers<MultiMap>(data));
@@ -111,6 +142,7 @@ value websocket_session::handle_request(std::string_view request_tag) const {
 
     auto itr = data.find("header");
     out = itr->first + "," + itr->second;
+
     boost::split(words, out, boost::is_any_of(","), boost::token_compress_on);
     vector_words.push_back(words);
 
